@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+SOURCE="OpenFOAM-src"
+
+echo "== Clean ${SOURCE} =="
+rm -rfv ${SOURCE}/build ${SOURCE}/platforms ${SOURCE}/src/*/lnInclude ${SOURCE}/src/*/*/lnInclude
+
+echo "== Clean myOpenFOAM =="
+rm -rfv myOpenFOAM
+
+echo "== DONE =="

@@ -1,2 +1,14 @@
-OpenFOAM-src/src
-src
+# Standart OpenFOAM files
+
+OpenFOAM-src/src/*
+!OpenFOAM-src/src/Allwmake
+OpenFOAM-src/wmake
+OpenFOAM-src/META-INFO
+OpenFOAM-src/etc/config.sh
+OpenFOAM-src/etc/controlDict
+
+# Compiler builds
+
+OpenFOAM-src/platforms
+OpenFOAM-src/build
+myOpenFOAM

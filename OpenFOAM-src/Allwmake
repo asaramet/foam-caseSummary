@@ -58,9 +58,9 @@ echo
 src/Allwmake $targetType $*
 
 echo "========================================"
-echo "Compile OpenFOAM applications"
+#echo "Compile OpenFOAM applications"
 echo
-applications/Allwmake $targetType $*
+#applications/Allwmake $targetType $*
 
 # Additional components/modules
 if [ -d "$WM_PROJECT_DIR/modules" ]
@@ -68,7 +68,7 @@ then
     echo "========================================"
     echo "Compile OpenFOAM modules"
     echo
-    (cd "$WM_PROJECT_DIR/modules" 2>/dev/null && wmake -all)
+    #(cd "$WM_PROJECT_DIR/modules" 2>/dev/null && wmake -all)
 fi
 
 # Count files in given directory. Ignore "Test-*" binaries.

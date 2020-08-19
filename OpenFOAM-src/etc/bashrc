@@ -38,6 +38,9 @@
 #     WM_PROJECT_SITE (optional directory)
 #         - local site-specific directory, uses WM_PROJECT_DIR/site if unset
 #
+# Note
+#     Changes made to this file will be lost with the next upgrade.
+#
 # Note A.Saramet
 #     Changes were made to this file not to compile the whole OpenFOAM package,
 #     only some libraries needed for 'caseSummary' application
@@ -74,6 +77,13 @@ export WM_LABEL_SIZE=32
 # Other is processor or packaging specific (eg, OptKNL)
 export WM_COMPILE_OPTION=Opt
 
+# [WM_MPLIB] - MPI implementation:
+# = SYSTEMOPENMPI | OPENMPI | SYSTEMMPI | MPI | MPICH | MPICH-GM |
+#   HPMPI | CRAY-MPICH | FJMPI | QSMPI | SGIMPI | INTELMPI | USERMPI
+# Also possible to use INTELMPI-xyz etc and define your own wmake rule
+export WM_MPLIB=SYSTEMOPENMPI
+
+
 #------------------------------------------------------------------------------
 # (advanced / legacy)
 
@@ -88,15 +98,46 @@ export WM_PROJECT=OpenFOAM
 #    This can be removed if an absolute path is provided for WM_PROJECT_DIR
 #    later on in this file
 # --
-# Here set $projectDir to local OpenFOAM-src
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-projectDir="${SCRIPT_DIR}/.."
+projectDir="$(dirname ${SCRIPT_DIR})"
 
+#projectDir="${BASH_SOURCE:-${ZSH_NAME:+$0}}";
+#[ -n "$projectDir" ] && projectDir="$(\cd $(dirname $projectDir)/.. && \pwd -L)" ||\
+#projectDir="$HOME/OpenFOAM/OpenFOAM-$WM_PROJECT_VERSION"
+# projectDir="/opt/openfoam/OpenFOAM-$WM_PROJECT_VERSION"
+# projectDir="/usr/local/OpenFOAM/OpenFOAM-$WM_PROJECT_VERSION"
 ################################################################################
 # Or optionally hard-coded (eg, with autoconfig)
 # projectDir="@PROJECT_DIR@"
 : # Safety statement (if the user removed all fallback values)
 
+# [FOAM_SIGFPE] - Trap floating-point exceptions.
+#               - overrides the 'trapFpe' controlDict entry
+# = true | false
+#export FOAM_SIGFPE=true
+
+# [FOAM_SETNAN] - Initialize memory with NaN
+#               - overrides the 'setNaN' controlDict entry
+# = true | false
+#export FOAM_SETNAN=false
+
+# [FOAM_CODE_TEMPLATES] - dynamicCode templates
+# - unset: uses 'foamEtcFile -list codeTemplates/dynamicCode'
+##export FOAM_CODE_TEMPLATES="$WM_PROJECT_DIR/etc/codeTemplates/dynamicCode"
+
+# [FOAM_JOB_DIR] - location of jobControl
+#                - unset: equivalent to ~/.OpenFOAM/jobControl
+# export FOAM_JOB_DIR="$HOME/.OpenFOAM/jobControl"
+
+# [WM_OSTYPE] - Operating System Type (set automatically)
+# = POSIX | MSwindows
+#export WM_OSTYPE=POSIX
+
+# [WM_ARCH_OPTION] - compiling with -m32 option on 64-bit system
+# = 32 | 64
+#   * on a 64-bit OS this can be 32 or 64
+#   * on a 32-bit OS this option is ignored (always 32-bit)
+#export WM_ARCH_OPTION=64
 
 ################################################################################
 # NO (NORMAL) USER EDITING BELOW HERE
@@ -110,7 +151,8 @@ foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR \
 export WM_PROJECT_DIR="$projectDir"
 
 # [WM_PROJECT_USER_DIR] - Location of user files
-export WM_PROJECT_USER_DIR="$HOME/$WM_PROJECT/$USER-$WM_PROJECT_VERSION"
+MAIN_DIR="$(dirname ${projectDir})"
+export WM_PROJECT_USER_DIR="${MAIN_DIR}/myOpenFOAM"
 
 # [WM_PROJECT_SITE] - Location of site-specific (group) files
 # Default (unset) implies WM_PROJECT_DIR/site

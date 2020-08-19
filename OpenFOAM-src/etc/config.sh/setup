@@ -24,10 +24,6 @@
 #     FOAM_CONFIG_NOUSER (set/unset)
 #         - suppress use of user/group configuration files
 #
-# Note A.Saramet
-#     Changes were made to this file not to compile the whole OpenFOAM package,
-#     only some libraries needed for 'caseSummary' application
-#
 #------------------------------------------------------------------------------
 
 # [FOAM_API] - The API level for the project
@@ -122,14 +118,14 @@ _foamEtc -config  settings
 
 # Setup for third-party packages
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#_foamEtc -config  mpi
-#_foamEtc -config  paraview -- "$@"  # Pass through for evaluation
-#_foamEtc -config  vtk
-#_foamEtc -config  gperftools
-#_foamEtc -config  adios2
-#_foamEtc -config  CGAL
-#_foamEtc -config  scotch
-#_foamEtc -config  FFTW
+_foamEtc -config  mpi
+_foamEtc -config  paraview -- "$@"  # Pass through for evaluation
+_foamEtc -config  vtk
+_foamEtc -config  gperftools
+_foamEtc -config  adios2
+_foamEtc -config  CGAL
+_foamEtc -config  scotch
+_foamEtc -config  FFTW
 
 if [ -d "$WM_PROJECT_DIR/doc/man1" ]
 then
