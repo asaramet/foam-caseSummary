@@ -6,6 +6,6 @@ echo "== Clean ${SOURCE} =="
 rm -rfv ${SOURCE}/build ${SOURCE}/platforms ${SOURCE}/src/*/lnInclude ${SOURCE}/src/*/*/lnInclude
 
 echo "== Clean myOpenFOAM =="
-rm -rfv myOpenFOAM
+rm -rfv myOpenFOAM caseSummary/Make/linux64GccDPInt32Opt
 
 echo "== DONE =="

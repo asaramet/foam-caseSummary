@@ -12,3 +12,4 @@ OpenFOAM-src/etc/controlDict
 OpenFOAM-src/platforms
 OpenFOAM-src/build
 myOpenFOAM
+caseSummary/Make/linux64GccDPInt32Opt
