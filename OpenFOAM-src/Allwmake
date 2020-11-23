@@ -1,18 +1,19 @@
 #!/bin/sh
 # Run from OPENFOAM top-level directory only
 cd "${0%/*}" || exit
-wmakeCheckPwd "$WM_PROJECT_DIR" 2>/dev/null || {
+wmake -check-dir "$WM_PROJECT_DIR" 2>/dev/null || {
     echo "Error (${0##*/}) : not located in \$WM_PROJECT_DIR"
     echo "    Check your OpenFOAM environment and installation"
     exit 1
 }
-[ -d "$WM_PROJECT_DIR" -a -f "$WM_PROJECT_DIR/etc/bashrc" ] || {
+if [ -f "$WM_PROJECT_DIR"/wmake/scripts/AllwmakeParseArguments ]
+then  . "$WM_PROJECT_DIR"/wmake/scripts/AllwmakeParseArguments || \
+    echo "Argument parse error";
+else
     echo "Error (${0##*/}) : WM_PROJECT_DIR appears to be incorrect"
     echo "    Check your OpenFOAM environment and installation"
     exit 1
-}
-
-. "$WM_PROJECT_DIR"/wmake/scripts/AllwmakeParseArguments
+fi
 
 #------------------------------------------------------------------------------
 # Preamble. Report tools or at least the mpirun location
@@ -47,9 +48,18 @@ echo
 # Compile ThirdParty libraries and applications
 if [ -d "$WM_THIRD_PARTY_DIR" ]
 then
-    "$WM_THIRD_PARTY_DIR/Allwmake"
+    if [ -e "$WM_THIRD_PARTY_DIR"/Allwmake.override ]
+    then
+        if [ -x "$WM_THIRD_PARTY_DIR"/Allwmake.override ]
+        then    "$WM_THIRD_PARTY_DIR"/Allwmake.override
+        fi
+    elif [ -x "$WM_THIRD_PARTY_DIR"/Allwmake ]
+    then      "$WM_THIRD_PARTY_DIR"/Allwmake
+    else
+        echo "Skip ThirdParty (no Allwmake* files)"
+    fi
 else
-    echo "No ThirdParty directory found - skipping"
+    echo "Skip ThirdParty (no directory)"
 fi
 
 echo "========================================"
@@ -58,23 +68,37 @@ echo
 src/Allwmake $targetType $*
 
 echo "========================================"
-#echo "Compile OpenFOAM applications"
+echo "Compile OpenFOAM applications"
 echo
 #applications/Allwmake $targetType $*
 
 # Additional components/modules
-if [ -d "$WM_PROJECT_DIR/modules" ]
+if [ "$FOAM_MODULE_PREFIX" = false ]
+then
+    echo "========================================"
+    echo "OpenFOAM modules disabled (prefix=false)"
+    echo
+elif [ -d "$WM_PROJECT_DIR/modules" ]
 then
     echo "========================================"
     echo "Compile OpenFOAM modules"
+    echo "    ignoring possible compilation errors"
+    echo "    make certain to check the output file"
     echo
-    #(cd "$WM_PROJECT_DIR/modules" 2>/dev/null && wmake -all)
+    set +e
+    export WM_CONTINUE_ON_ERROR=true
+
+    # Default build into OpenFOAM project locations
+    : "${FOAM_MODULE_PREFIX:=${FOAM_LIBBIN%/*}}"
+    export FOAM_MODULE_PREFIX
+
+    (cd "$WM_PROJECT_DIR/modules" 2>/dev/null && wmake -all)
 fi
 
 # Count files in given directory. Ignore "Test-*" binaries.
 _foamCountDirEntries()
 {
-    (cd "$1" 2>/dev/null && find -mindepth 1 -maxdepth 1 -type f 2>/dev/null) |\
+    (cd "$1" 2>/dev/null && find . -mindepth 1 -maxdepth 1 -type f 2>/dev/null) |\
         sed -e '\@/Test-@d' | wc -l
 }
 
@@ -86,10 +110,10 @@ echo "  ${WM_PROJECT_DIR##*/}"
 echo "  $WM_COMPILER ${WM_COMPILER_TYPE:-system} compiler"
 echo "  ${WM_OPTIONS}, with ${WM_MPLIB} ${FOAM_MPI}"
 echo
-echo "  api   = $(foamEtcFile -show-api 2>/dev/null)"
-echo "  patch = $(foamEtcFile -show-patch 2>/dev/null)"
-echo "  bin   = $(_foamCountDirEntries $FOAM_APPBIN) entries"
-echo "  lib   = $(_foamCountDirEntries $FOAM_LIBBIN) entries"
+echo "  api   = $(etc/openfoam -show-api 2>/dev/null)"
+echo "  patch = $(etc/openfoam -show-patch 2>/dev/null)"
+echo "  bin   = $(_foamCountDirEntries "$FOAM_APPBIN") entries"
+echo "  lib   = $(_foamCountDirEntries "$FOAM_LIBBIN") entries"
 echo
 echo "========================================"
 

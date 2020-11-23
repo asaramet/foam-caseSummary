@@ -1,11 +1,6 @@
 # Standart OpenFOAM files
 
-OpenFOAM-src/src/*
-!OpenFOAM-src/src/Allwmake
-OpenFOAM-src/wmake
-OpenFOAM-src/META-INFO
-OpenFOAM-src/etc/config.sh
-OpenFOAM-src/etc/controlDict
+OpenFOAM-src
 
 # Compiler builds
 
@@ -13,3 +8,7 @@ OpenFOAM-src/platforms
 OpenFOAM-src/build
 myOpenFOAM
 caseSummary/Make/linux64GccDPInt32Opt
+
+
+# Redundant
+sample

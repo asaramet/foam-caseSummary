@@ -6,11 +6,10 @@
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 #     Copyright (C) 2011-2016 OpenFOAM Foundation
-#     Copyright (C) 2016-2019 OpenCFD Ltd.
+#     Copyright (C) 2016-2020 OpenCFD Ltd.
 #------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM, licensed under GNU General Public License
-#     <http://www.gnu.org/licenses/>.
+#     This file is part of OpenFOAM, distributed under GPL-3.0-or-later.
 #
 # File
 #     etc/config.sh/settings
@@ -83,8 +82,9 @@ Linux)
     esac
     ;;
 
-Darwin)     # Presumably x86_64
+Darwin)     # Presume x86_64, with clang (not gcc) as system compiler
     WM_ARCH=darwin64
+    [ "$WM_COMPILER" = Gcc ] && WM_COMPILER=Clang
     echo "Darwin support is clang/llvm only" 1>&2
     ;;
 
@@ -166,7 +166,7 @@ fi
 # OpenFOAM executables (user, group, standard)
 _foamAddPath "$FOAM_USER_APPBIN:$FOAM_SITE_APPBIN:$FOAM_APPBIN"
 
-# Dummy versions of external libraries. To be found last in LD_LIBRARY_PATH
+# Dummy versions of external libraries. To be found last in library path
 _foamAddLib  "$FOAM_LIBBIN/dummy"
 
 # External (ThirdParty) libraries. Also allowed to be unset

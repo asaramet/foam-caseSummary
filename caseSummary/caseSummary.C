@@ -1,72 +1,82 @@
+ /*---------------------------------------------------------------------------*\
+ Application
+     caseSummary
+
+ Description
+     Display OpenFOAM case settings and configuration
+
+ Usage
+     \b foamDictionary [OPTION] dictionary
+
+       - \par -entry <name>
+         Selects an entry
+
+       - \par -keywords
+         Prints the keywords (of the selected entry or of the top level if
+         no entry was selected
+
+       - \par -add <value>
+         Adds the entry (should not exist yet)
+
+       - \par -set <value>
+         Adds or replaces the entry
+
+       - \par -remove
+         Remove the selected entry
+
+ \*---------------------------------------------------------------------------*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <ctype.h>
 
+#include "argList.H"
+//#include "profiling.H"
+#include "Time.H"
+#include "Fstream.H"
+#include "etcFiles.H"
+//#include "includeEntry.H"
+
+#include "cpuInfo.H"
+#include "IOstreams.H"
+
+using namespace Foam;
+
 //using namespace std;
 
-static void help(char *progname);
-
-int main(int argc, char *argv[]) {
-  if (argc == 1) {
-    help(argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  FILE *outputFile = stdout; // output to file or stdout
-  int opt;
-  while ((opt = getopt(argc, argv, "hw:")) != -1) {
-    switch (opt) {
-      case 'w':
-        outputFile = fopen(optarg, "w");
-        break;
-      case 'h':
-        help(argv[0]);
-        break;
-      case '?':
-        if (optopt == 'w')
-          fprintf(stderr, "ERROR: Output file is not specified with '-%c'.\n", optopt);
-        else if (isprint(optopt))
-          fprintf(stderr, "ERROR: Unknown option '-%c'.\n", optopt);
-        else
-          fprintf(stderr, "Unknown option character '\\x%x'.\n", optopt);
-        fclose(outputFile);
-        return EXIT_FAILURE;
-      default:
-        abort();
-    }
-  }
-  for (int index = optind; index < argc; index++)
-    printf("WARNING: Non-option argument, '%s'\n", argv[index]);
-  fclose(outputFile);
-  return EXIT_SUCCESS;
+void initials()
+{
+  Info<< "|------------------------------------------------------------------|\nPHYSICS - INITIAL CONDITIONS\n" << endl;
+  Info<< nl << "Initial Pressure: " << endl;
 }
 
-static void help(char *progname)
+int main(int argc, char *argv[])
 {
-  const char *text = "\n\tPre-processing an OpenFOAM case\n\n"
-  "\tUsage: ";
-  printf("%s%s", text, progname);
-  text = " [OPTIONS]\n\n\tOPTIONS:\n"
-  "\t  -h\t\t\t\tShow this message\n"
-  "\t  -g\t\t\t\tCollect general data\n"
-  "\t  -i\t\t\t\tPre-process initial conditions\n"
-  "\t  -a\t\t\t\tCollect all data\n"
-  "\t  -f [FOLDER PATH]\t\tSpecify case folder as a string [FOLDER PATH]"
-  ". If this option is not specified, the app will run on current path ($PWD)\n"
-  "\t  -w [REPORT FILE]\t\tSpecify report data file name as a string [REPORT FILE]"
-  ". If this option is not specified data will be displayed on standart output (stdout)\n\n"
-  "\t NOTE: -w and -f should be specified before any other options!\n\n"
-  "\tEXAMPLES:\n"
-  "\t  Display initial/boundary conditions data from ${HOME}/OpenFOAM/myCase:\n\n"
-  "\t    ";
-  printf("%s%s", text, progname);
-  text = " -f ${HOME}/OpenFOAM/myCase -i\n\n";
-  printf("%s", text);
-  text = "\t  Collect all data from case ${HOME}/OpenFOAM/myCase into 'report.txt':\n\n"
-  "\t    ";
-  printf("%s%s", text, progname);
-  text = " -f ${HOME}/OpenFOAM/myCase -w report.txt -a\n\n";
-  printf("%s", text);
+  argList::addNote("Display OpenFOAM case settings and configuration");
+
+  argList::noBanner();
+  argList::noParallel();
+  argList::noMandatoryArgs();
+
+  //argList args(argc, argv);
+
+  Info<< "|------------------------------------------------------------------|\n" << endl;
+  cpuInfo().write(Info);
+
+  #include "setRootCase.H"
+  //#include "createTime.H"
+  {
+    const fileName inputFile
+    {
+      // etc/controlDict file is mandatory in every distribution
+      findEtcFile("controlDict", true, 0007)
+    };
+
+    Info<< nl << "Test getLine" << nl << inputFile << nl;
+  }
+
+  initials();
+  Info<< "\nEnd\n" << endl;
 }

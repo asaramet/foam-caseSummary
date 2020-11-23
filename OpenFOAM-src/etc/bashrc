@@ -6,11 +6,10 @@
 #    \\/     M anipulation  |
 #------------------------------------------------------------------------------
 #     Copyright (C) 2011-2016 OpenFOAM Foundation
-#     Copyright (C) 2016-2019 OpenCFD Ltd.
+#     Copyright (C) 2016-2020 OpenCFD Ltd.
 #------------------------------------------------------------------------------
 # License
-#     This file is part of OpenFOAM, licensed under GNU General Public License
-#     <http://www.gnu.org/licenses/>.
+#     This file is part of OpenFOAM, distributed under GPL-3.0-or-later.
 #
 # File
 #     etc/bashrc
@@ -30,26 +29,33 @@
 #         -  $WM_PROJECT_SITE/$FOAM_API/etc/prefs.sh
 #         -  $WM_PROJECT_SITE/etc/prefs.sh
 #
+#     Some settings can also be overridden on the command-line when
+#     sourcing this file. For example,
+#
+#       . /path/etc/bashrc WM_COMPILER=Clang WM_LABEL_SIZE=64
+#
 # Environment
+#     FOAM_CONFIG_ETC
+#     - alternative/additional location for OpenFOAM etc/ directory
+#
+#     FOAM_CONFIG_MODE (search mode for etc config files - see foamEtcFile)
+#         - eg, FOAM_CONFIG_MODE="o" to only use OpenFOAM config files
+#         - no influence on OpenFOAM applications, just the config files
+#
 #     FOAM_VERBOSE (set/unset)
 #         - add extra verbosity when sourcing files
-#     FOAM_CONFIG_NOUSER (set/unset)
-#         - suppress use of user/group configuration files
+#
 #     WM_PROJECT_SITE (optional directory)
 #         - local site-specific directory, uses WM_PROJECT_DIR/site if unset
 #
 # Note
 #     Changes made to this file will be lost with the next upgrade.
 #
-# Note A.Saramet
-#     Changes were made to this file not to compile the whole OpenFOAM package,
-#     only some libraries needed for 'caseSummary' application
-#
 #------------------------------------------------------------------------------
 
 # [WM_PROJECT_VERSION] - A human-readable version name
 # A development version is often named 'com' - as in www.openfoam.com
-export WM_PROJECT_VERSION=v1912
+export WM_PROJECT_VERSION=v2006
 
 #------------------------------------------------------------------------------
 # Configuration environment variables.
@@ -60,8 +66,8 @@ export WM_PROJECT_VERSION=v1912
 export WM_COMPILER_TYPE=system
 
 # [WM_COMPILER] - Compiler:
-# = Gcc | Gcc4[8-9] | Gcc5[1-5] | Gcc6[1-5] | Gcc7[1-4] | Gcc8[12] |
-#   Clang | Clang3[7-9] | Clang[4-6]0 | Icc | Cray | Arm | Pgi
+# = Gcc | Clang | Icc | Cray | Amd | Arm | Pgi | Fujitsu |
+#   Gcc<digits> | Clang<digits>
 export WM_COMPILER=Gcc
 
 # [WM_PRECISION_OPTION] - Floating-point precision:
@@ -99,11 +105,8 @@ export WM_PROJECT=OpenFOAM
 #    later on in this file
 # --
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+[ -n "$projectDir" ] && projectDir="$(\cd $(dirname $projectDir)/.. && \pwd -L)" ||\
 projectDir="$(dirname ${SCRIPT_DIR})"
-
-#projectDir="${BASH_SOURCE:-${ZSH_NAME:+$0}}";
-#[ -n "$projectDir" ] && projectDir="$(\cd $(dirname $projectDir)/.. && \pwd -L)" ||\
-#projectDir="$HOME/OpenFOAM/OpenFOAM-$WM_PROJECT_VERSION"
 # projectDir="/opt/openfoam/OpenFOAM-$WM_PROJECT_VERSION"
 # projectDir="/usr/local/OpenFOAM/OpenFOAM-$WM_PROJECT_VERSION"
 ################################################################################
@@ -139,20 +142,25 @@ projectDir="$(dirname ${SCRIPT_DIR})"
 #   * on a 32-bit OS this option is ignored (always 32-bit)
 #export WM_ARCH_OPTION=64
 
+# [FOAM_EXTRA_CFLAGS, FOAM_EXTRA_CXXFLAGS, FOAM_EXTRA_LDFLAGS]
+# Additional compilation flags - do not inherit from the environment.
+# Set after sourcing or via <prefs.sh> to avoid surprises.
+unset FOAM_EXTRA_CFLAGS FOAM_EXTRA_CXXFLAGS FOAM_EXTRA_LDFLAGS
+
 ################################################################################
 # NO (NORMAL) USER EDITING BELOW HERE
 
 # Capture values of old directories to be cleaned from PATH, LD_LIBRARY_PATH
 foamOldDirs="$WM_PROJECT_DIR $WM_THIRD_PARTY_DIR \
     $HOME/$WM_PROJECT/$USER $FOAM_USER_APPBIN $FOAM_USER_LIBBIN \
-    $WM_PROJECT_SITE $FOAM_SITE_APPBIN $FOAM_SITE_LIBBIN"
+    $WM_PROJECT_SITE $FOAM_SITE_APPBIN $FOAM_SITE_LIBBIN \
+    $FOAM_MODULE_APPBIN $FOAM_MODULE_LIBBIN"
 
 # [WM_PROJECT_DIR] - Location of this OpenFOAM version
 export WM_PROJECT_DIR="$projectDir"
 
 # [WM_PROJECT_USER_DIR] - Location of user files
-MAIN_DIR="$(dirname ${projectDir})"
-export WM_PROJECT_USER_DIR="${MAIN_DIR}/myOpenFOAM"
+export WM_PROJECT_USER_DIR="$HOME/$WM_PROJECT/$USER-$WM_PROJECT_VERSION"
 
 # [WM_PROJECT_SITE] - Location of site-specific (group) files
 # Default (unset) implies WM_PROJECT_DIR/site
