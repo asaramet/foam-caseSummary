@@ -1,35 +1,40 @@
-# caseSummary
+# OpenFOAM utility to display Foam case structure and configuration.
 
-An OpenFOAM utility to display Foam case structure and configuration.
+The application is developed under the OpenFOAM Project. It may be compiled with any OpenFOAM version and used to display some OpenFOAM case structure configuration and additional info.  
 
 ## Installation
 
-If you have OpenFOAM installed on your system, the utility will be installed in $FOAM_USER_APPBIN, once you compile it from 'caseSummary' folder with:
+If you have OpenFOAM installed on your system, the utility will be installed as a user developed application in $FOAM_USER_APPBIN, once you compile it from 'caseSummary' folder with:
 
 ```
   cd caseSummary
   wmake
 ```
 
-To test the utility without installing OpenFOAM, you'll first have to compile base OpenFOAM libraries collected in 'OpenFOAM-src' folder from official [OpenFOAM v1912](https://openfoam.com) distribution.
+## Sandbox
 
-To do so:
+It is possible to create a sandbox for testing or additional development.
 
-1. source the 'bashrc' file to set the required environment variables and paths.
+1. Get the source code of any OpenFOAM on your machine. Although OpenFOAM versions grater or equal to v2006 are recommended.
+
+2. Set the path to OpenFOAM source code as 'OF_SOURCE_FOLDER' variable in 'scripts.sh/build_sandbox.sh'.
+
+3. Run the script
 ```
-  source OpenFOAM-src/etc/bashrc
+  ./scripts.sh/build_sandbox.sh
 ```
 
-2. Compile basic OpenFOAM libraries:
+4. Compile created 'OpenFOAM-src'
 ```
   ./OpenFOAM-src/Allwmake -j
 ```
 
-3. Compile the utility
+5. Source your OpenFOAM sandbox
 ```
-  cd caseSummary
-  wmake
+  source OpenFOAM-src/etc/bashrc
 ```
+
+**Note: To use your sandbox, it will have to first be sourced as shown in (5)**
 
 ## Requirements
 
