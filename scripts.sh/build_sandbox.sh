@@ -39,6 +39,9 @@ copy_data()
   [[ ! -d ${config_folder:?} ]] && mkdir -p ${config_folder}
   cp -f ${OF_SOURCE_FOLDER}/etc/config.sh/{functions,settings,setup} ${config_folder:?}
 
+  sed -i s:'^export FOAM_USER_APPBIN.*':"export FOAM_USER_APPBIN=${BUILD_FOLDER}/foamUser/platforms/\$WM_OPTIONS/bin":g ${config_folder}/settings
+  sed -i s:'^export FOAM_USER_LIBBIN.*':"export FOAM_USER_LIBBIN=${BUILD_FOLDER}/foamUser/platforms/\$WM_OPTIONS/lib":g ${config_folder}/settings
+
   src_folder="${BUILD_FOLDER}/src"
   [[ ! -d ${src_folder} ]] && mkdir -p ${src_folder}
   cp -rf ${OF_SOURCE_FOLDER}/src/{OpenFOAM,OSspecific,Pstream} ${src_folder}
