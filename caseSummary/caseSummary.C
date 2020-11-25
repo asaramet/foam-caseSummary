@@ -25,58 +25,75 @@
          Remove the selected entry
 
  \*---------------------------------------------------------------------------*/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <ctype.h>
-
+#include <cctype>
 #include "argList.H"
-//#include "profiling.H"
-#include "Time.H"
-#include "Fstream.H"
 #include "etcFiles.H"
-//#include "includeEntry.H"
-
 #include "cpuInfo.H"
-#include "IOstreams.H"
+//#include "IOstream.H"     // iostream
+#include "Ostream.H"        // ostream
+#include "IOmanip.H"        // iomanip
+//#include "profiling.H"
+//#include "Time.H"
+//#include "Fstream.H"
+//#include "includeEntry.H"
+//#include "IOstreams.H"
+#include <string>
 
-using namespace Foam;
-
-//using namespace std;
-
-void initials()
-{
-  Info<< "|------------------------------------------------------------------|\nPHYSICS - INITIAL CONDITIONS\n" << endl;
-  Info<< nl << "Initial Pressure: " << endl;
-}
+#include "caseSummary.H"
 
 int main(int argc, char *argv[])
 {
-  argList::addNote("Display OpenFOAM case settings and configuration");
+  Foam::argList::addNote("Display OpenFOAM case settings and configuration");
 
-  argList::noBanner();
-  argList::noParallel();
-  argList::noMandatoryArgs();
+  Foam::argList::noBanner();
+  Foam::argList::noParallel();
+  Foam::argList::noMandatoryArgs();
 
   //argList args(argc, argv);
-
-  Info<< "|------------------------------------------------------------------|\n" << endl;
-  cpuInfo().write(Info);
 
   #include "setRootCase.H"
   //#include "createTime.H"
   {
-    const fileName inputFile
+    const Foam::fileName inputFile
     {
       // etc/controlDict file is mandatory in every distribution
-      findEtcFile("controlDict", true, 0007)
+      Foam::findEtcFile("controlDict", true, 0007)
     };
 
-    Info<< nl << "Test getLine" << nl << inputFile << nl;
+    Foam::Info << Foam::nl << "Test getLine" << Foam::nl << inputFile << Foam::nl;
   }
 
-  initials();
-  Info<< "\nEnd\n" << endl;
+  Foam::CaseSummary caseSummary {};
+
+  caseSummary.systemInfo(Foam::Info);
+  caseSummary.initials(Foam::Info);
+
+  Foam::Info << "\nEnd\n" << Foam::endl;
+}
+
+void Foam::CaseSummary::delimiter(Foam::Ostream &os) const
+{
+  os << Foam::setw(120) << Foam::setfill('-') << Foam::endl;
+}
+
+void Foam::CaseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info) const
+{
+  for (char &letter:title)
+    letter = std::toupper(letter);
+  os << Foam::nl << Foam::setw(10) << Foam::setfill(' ')
+     << title << Foam::nl << Foam::endl;
+}
+
+void Foam::CaseSummary::systemInfo(Foam::Ostream &os) const
+{
+  title("System Information");
+  Foam::cpuInfo().write(Foam::Info);
+  delimiter(os);
+}
+
+void Foam::CaseSummary::initials(Foam::Ostream &os) const
+{
+  title("Phisics - initial conditions");
+  //Foam::Info << Foam::nl << "Initial Pressure: " << Foam::endl;
+  delimiter(os);
 }
