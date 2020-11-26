@@ -13,7 +13,7 @@ namespace Foam
     void delimiter(Ostream &os) const;
 
     //- Section title
-    void title(string, Ostream&) const; 
+    void title(string, Ostream&) const;
   public:
     // Constructors
     CaseSummary() = default;
@@ -30,11 +30,13 @@ namespace Foam
     // Public Member Functions
 
     //- Display system/machine info
-    void systemInfo(Ostream &os) const;
+    void cpuInfo(Ostream &os) const;
 
     //- Display initial conditions
     void initials(Ostream &os) const;
 
+    //- Display everythig
+    void all(Ostream &os) const;
   };
 
   //extern CaseSummary caseSummary;
