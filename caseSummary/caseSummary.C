@@ -6,32 +6,28 @@
      Display OpenFOAM case settings and configuration
 
  Usage
-     \b foamDictionary [OPTION] dictionary
+     \b caseSummary [OPTIONS]
 
-       - \par -entry <name>
-         Selects an entry
+       - \par -system
+         Display system information
 
-       - \par -keywords
-         Prints the keywords (of the selected entry or of the top level if
-         no entry was selected
+       - \par -initials
+         Display initial conditions only
 
-       - \par -add <value>
-         Adds the entry (should not exist yet)
-
-       - \par -set <value>
-         Adds or replaces the entry
-
-       - \par -remove
-         Remove the selected entry
-
+       - \par
+         Display all the data
  \*---------------------------------------------------------------------------*/
 #include <cctype>
-#include "argList.H"
+
 #include "cpuInfo.H"
-#include "etcFiles.H"
-//#include "IOstream.H"     // iostream
+#include "foamVersion.H"
+#include "clock.H"
+
 #include "Ostream.H"        // ostream
 #include "IOmanip.H"        // iomanip
+
+#include "etcFiles.H"
+//#include "IOstream.H"     // iostream
 //#include "profiling.H"
 //#include "Time.H"
 //#include "Fstream.H"
@@ -56,7 +52,8 @@ int main(int argc, char *argv[])
   Foam::argList::noMandatoryArgs();
 
   //- add options (command arguments)
-  Foam::argList::addBoolOption("cpu", "Display system's CPU information");
+  Foam::argList::addBoolOption("system", "Display system information");
+  Foam::argList::addBoolOption("general", "Display general case information");
   Foam::argList::addBoolOption("initials", "Display initial conditions only");
 
   // Create an argList Object ("setRootCase.H")
@@ -67,29 +64,28 @@ int main(int argc, char *argv[])
 
   //#include "createTime.H"
   {
-    const Foam::fileName inputFile
-    {
-      // etc/controlDict file is mandatory in every distribution
-      Foam::findEtcFile("controlDict", true, 0007)
-    };
-
+    const Foam::fileName inputFile { Foam::findEtcFile("controlDict", true, 0007) };
     Foam::Info << Foam::nl << "Test getLine" << Foam::nl << inputFile << Foam::nl;
   }
 
   // Crate a CaseSummary object
   Foam::CaseSummary caseSummary {};
 
+  // Default display (no specific options provided)
+  if (args.options().empty())
+    caseSummary.all(Foam::Info, args);
+
   // Display initial conditions only
   if (args.found("initials"))
     caseSummary.initials(Foam::Info);
 
   // Display cpu info
-  if (args.found("cpu"))
-    caseSummary.cpuInfo(Foam::Info);
+  if (args.found("system"))
+    caseSummary.systemInfo(Foam::Info);
 
-  // Default display (no specific options provided)
-  if (args.options().empty())
-    caseSummary.all(Foam::Info);
+  // Display case info
+  if (args.found("general"))
+    caseSummary.generalInfo(Foam::Info, args);
 
   Foam::Info << "\nEnd\n" << Foam::endl;
 }
@@ -107,22 +103,40 @@ void Foam::CaseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info
      << title << Foam::nl << Foam::endl;
 }
 
-void Foam::CaseSummary::cpuInfo(Foam::Ostream &os) const
+void Foam::CaseSummary::systemInfo(Foam::Ostream &os) const
 {
+  title("About");
+  Foam::string of {"OpenFOAM-"};
+  of += Foam::FOAMversion;
+  os.writeEntry("Module", of);
+  os.writeEntry("Build", Foam::FOAMbuild);
+  os.writeEntry("Architecture", Foam::FOAMbuildArch);
+  os.writeEntry("Current Time", Foam::clock::dateTime());
+
   title("System CPU Information");
-  Foam::cpuInfo().write(Foam::Info);
+  Foam::cpuInfo().write(os);
+
   delimiter(os);
 }
 
 void Foam::CaseSummary::initials(Foam::Ostream &os) const
 {
   title("Phisics - initial conditions");
-  //Foam::Info << Foam::nl << "Initial Pressure: " << Foam::endl;
   delimiter(os);
 }
 
-void Foam::CaseSummary::all(Foam::Ostream &os) const
+void Foam::CaseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args) const
 {
-  cpuInfo(os);
+  title("Current Case");
+  os.writeEntry("Case basename", args.caseName());
+  os.writeEntry("Case root path", args.rootPath());
+
+  delimiter(os);
+}
+
+void Foam::CaseSummary::all(Foam::Ostream &os, const Foam::argList &args) const
+{
+  systemInfo(os);
+  generalInfo(os, args);
   initials(os);
 }
