@@ -18,6 +18,7 @@
          Display all the data
  \*---------------------------------------------------------------------------*/
 #include <cctype>
+//#include <memory>
 
 #include "cpuInfo.H"
 #include "foamVersion.H"
@@ -25,6 +26,7 @@
 
 #include "Ostream.H"        // ostream
 #include "IOmanip.H"        // iomanip
+#include "Time.H"
 
 #include "etcFiles.H"
 //#include "IOstream.H"     // iostream
@@ -77,7 +79,7 @@ int main(int argc, char *argv[])
 
   // Display initial conditions only
   if (args.found("initials"))
-    caseSummary.initials(Foam::Info);
+    caseSummary.initials(Foam::Info, args);
 
   // Display cpu info
   if (args.found("system"))
@@ -119,10 +121,25 @@ void Foam::CaseSummary::systemInfo(Foam::Ostream &os) const
   delimiter(os);
 }
 
-void Foam::CaseSummary::initials(Foam::Ostream &os) const
+void Foam::CaseSummary::initials(Foam::Ostream &os, const Foam::argList &args) const
 {
   title("Phisics - initial conditions");
+
+  // TODO
+  Foam::Info << "Case Regions: \n i.e U, p, rho etc\n" << Foam::nl;
+  Foam::Info << "Case Patches\n" << Foam::nl;
+  Foam::Info << "Use IOobject ??\n" << Foam::nl;
+
+  // create an unique pointer to the case endTime (using root/case path)
+  std::unique_ptr<Foam::Time> zero_time { new Foam::Time(args.rootPath(), args.caseName()) };
+  if (!zero_time) return;
+
+  //auto obj = Foam::objectRegistry(*zero_time);
+  //auto ioobj = IOobject()
+
   delimiter(os);
+
+  //delete(zero_time);
 }
 
 void Foam::CaseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args) const
@@ -138,5 +155,5 @@ void Foam::CaseSummary::all(Foam::Ostream &os, const Foam::argList &args) const
 {
   systemInfo(os);
   generalInfo(os, args);
-  initials(os);
+  initials(os, args);
 }

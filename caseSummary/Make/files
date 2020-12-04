@@ -1,3 +1,4 @@
+boundaryInfo.C
 caseSummary.C
 
 EXE = $(FOAM_USER_APPBIN)/caseSummary

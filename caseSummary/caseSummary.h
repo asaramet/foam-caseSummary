@@ -1,6 +1,7 @@
 #ifndef _CASESUMMARY_H_
 
 #include "argList.H"
+#include "boundaryInfo.H"
 
 namespace Foam
 {
@@ -41,7 +42,7 @@ namespace Foam
     void generalInfo(Ostream&, const argList&) const;
 
     //- Display initial conditions
-    void initials(Ostream &os) const;
+    void initials(Ostream&, const argList&) const;
 
     //- Display everythig
     void all(Ostream &os, const argList&) const;
