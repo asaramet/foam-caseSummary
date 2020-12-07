@@ -1,8 +1,11 @@
 /*---------------------------------------------------------------------------*\
+
 Copyright (C) 2015 OpenFOAM Foundation
 Copyright (C) 2018 OpenCFD Ltd.
 
 Source: https://develop.openfoam.com/Development/openfoam/-/tree/OpenFOAM-v2006/
+or: applications/utilities/preProcessing/createZeroDictionary/boundaryInfo.C
+
 \*---------------------------------------------------------------------------*/
 
 #include "boundaryInfo.H"
@@ -76,10 +79,66 @@ Foam::IOPtrList<Foam::entry> Foam::boundaryInfo::readBoundaryDict
   return boundaryPatchList;
 }
 
-// * * * * * * * * * * * * Constructors* * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
-#if 0
-Foam::boundaryInfo::boundaryInfo(const Time& runTime, const word& regionName)
+Foam::boundaryInfo::boundaryInfo(const Foam::Time& runTime, const Foam::word& regionName)
 :
   boundaryDict_(readBoundaryDict(runTime, regionName)),
-#endif
+  names_(),
+  types_(),
+  constraint_(),
+  groups_(),
+  allGroupNames_()
+{
+  names_.setSize(boundaryDict_.size());
+  types_.setSize(boundaryDict_.size());
+  constraint_.setSize(boundaryDict_.size(), false);
+  groups_.setSize(boundaryDict_.size());
+
+  forAll(boundaryDict_, patchI)
+  {
+    const Foam::dictionary& dict { boundaryDict_[patchI].dict() };
+
+    names_[patchI] = dict.dictName();
+    dict.readEntry("type", types_[patchI]);
+    if (Foam::polyPatch::constraintType(types_[patchI]))
+      constraint_[patchI] = true;
+
+    if (dict.readIfPresent("inGroups", groups_[patchI]))
+      allGroupNames_.insert(groups_[patchI]);
+  }
+}
+
+// * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * * * //
+
+const Foam::wordList& Foam::boundaryInfo::names() const
+{
+  return names_;
+}
+
+const Foam::wordList& Foam::boundaryInfo::types() const
+{
+  return types_;
+}
+
+const Foam::boolList& Foam::boundaryInfo::constraint() const
+{
+  return constraint_;
+}
+
+const Foam::List<Foam::wordList>& Foam::boundaryInfo::groups() const
+{
+  return groups_;
+}
+
+const Foam::wordHashSet& Foam::boundaryInfo::allGroupNames() const
+{
+  return allGroupNames_;
+}
+
+void Foam::boundaryInfo::setType(const label patchI, const word& condition)
+{
+  // do not override constraint types
+  if (constraint_[patchI])
+    return;
+}

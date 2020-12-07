@@ -1,8 +1,10 @@
 /*---------------------------------------------------------------------------*\
+
 Copyright (C) 2015 OpenFOAM Foundation
 Copyright (C) 2018 OpenCFD Ltd.
 
 Source: https://www.openfoam.com/documentation/guides/latest/api/
+or: applications/utilities/preProcessing/createZeroDictionary/boundaryInfo.H
 
 Class
   Foam::boundaryInfo
