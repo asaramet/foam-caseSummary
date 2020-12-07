@@ -6,6 +6,22 @@ Copyright (C) 2018 OpenCFD Ltd.
 Source: https://develop.openfoam.com/Development/openfoam/-/tree/OpenFOAM-v2006/
 or: applications/utilities/preProcessing/createZeroDictionary/boundaryInfo.C
 
+License
+   This file is part of OpenFOAM.
+
+   OpenFOAM is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+   for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
 \*---------------------------------------------------------------------------*/
 
 #include "boundaryInfo.H"
@@ -23,29 +39,25 @@ namespace Foam
 
 // * * * * * * * * * * * * Private Member Functions* * * * * * * * * * * * * //
 
-Foam::IOPtrList<Foam::entry> Foam::boundaryInfo::readBoundaryDict
-(
-  const Foam::Time& runTime,
-  const Foam::word& regionName
-) const
+Foam::IOPtrList<Foam::entry> Foam::boundaryInfo::readBoundaryDict(const Foam::Time& runTime, const Foam::word& regionName) const
 {
-  //Foam::Info << "--> Reading mesh boundaries" << Foam::endl;
+  Foam::Info << "--> Reading mesh boundaries" << Foam::endl;
 
   // for this usage, change the typeName of IOPtrList<entry> function to the one in polyBoundaryMesh
   const_cast<Foam::word&>(IOPtrList<Foam::entry>::typeName) = polyBoundaryMesh::typeName;
 
   // get the patch list
-  IOPtrList<entry> boundaryPatchList
+  Foam::IOPtrList<entry> boundaryPatchList
   (
-    IOobject
+    Foam::IOobject
     (
-      "boundary",
-      runTime.findInstance(regionName/polyMesh::meshSubDir, "boundary"),
-      regionName/polyMesh::meshSubDir,
-      runTime,
-      IOobject::MUST_READ,
-      IOobject::NO_WRITE,
-      false
+      "boundary",                                                             // name
+      runTime.findInstance(regionName/polyMesh::meshSubDir, "boundary"),       // instance (fileName)
+      regionName/polyMesh::meshSubDir,                                        // local (fileName)
+      runTime,                                                                // objectRegistry
+      Foam::IOobject::MUST_READ,                                              // read option
+      Foam::IOobject::NO_WRITE,                                               // write option
+      false                                                                   // registerObject
     )
   );
 
@@ -141,4 +153,21 @@ void Foam::boundaryInfo::setType(const label patchI, const word& condition)
   // do not override constraint types
   if (constraint_[patchI])
     return;
+
+  // ugly hack to avoid overriding mapped types
+  if (regExp(".*[Mm]apped.*").match(types_[patchI]))
+    return;
+
+  if (condition == "wall")
+    types_[patchI] = condition;
+  else
+    types_[patchI] = "patch";
+
+  Foam::dictionary& patchDict = boundaryDict_[patchI].dict();
+  patchDict.add("type", types_[patchI], true);
+}
+
+void Foam::boundaryInfo::write() const
+{
+  boundaryDict_.write();
 }
