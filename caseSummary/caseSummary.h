@@ -44,8 +44,11 @@ namespace Foam
     //- Display initial conditions
     void initials(Ostream&, const argList&) const;
 
+    //- Display solver information
+    void solver(Ostream&, const Time&) const;
+
     //- Display everythig
-    void all(Ostream &os, const argList&) const;
+    void all(Ostream &os, const argList&, const Time&) const;
   };
 
   //extern CaseSummary caseSummary;

@@ -35,6 +35,7 @@
 //#include "Fstream.H"
 //#include "includeEntry.H"
 //#include "IOstreams.H"
+#include "IOdictionary.H"   // constructor from IOobject with readData/writeData functions
 
 #include "caseSummary.H"
 
@@ -57,6 +58,8 @@ int main(int argc, char *argv[])
   Foam::argList::addBoolOption("system", "Display system information");
   Foam::argList::addBoolOption("general", "Display general case information");
   Foam::argList::addBoolOption("initials", "Display initial conditions only");
+  Foam::argList::addBoolOption("solver", "Display solver settings");
+  Foam::argList::addBoolOption("", "Display all collected information");
 
   // Create an argList Object ("setRootCase.H")
   Foam::argList args(argc, argv);
@@ -64,18 +67,20 @@ int main(int argc, char *argv[])
   if (!args.checkRootCase())
     Foam::FatalError.exit();
 
-  //#include "createTime.H"
-  {
-    const Foam::fileName inputFile { Foam::findEtcFile("controlDict", true, 0007) };
-    Foam::Info << Foam::nl << "Test getLine" << Foam::nl << inputFile << Foam::nl;
-  }
+  // Create run Time Object from default controlDict ("createTime.H")
+  Foam::Time runTime(Foam::Time::controlDictName, args);
+
+  //{
+  //  const Foam::fileName inputFile { Foam::findEtcFile("controlDict", true, 0007) };
+  //  Foam::Info << Foam::nl << "Test getLine" << Foam::nl << inputFile << Foam::nl;
+  //}
 
   // Crate a CaseSummary object
   Foam::CaseSummary caseSummary {};
 
   // Default display (no specific options provided)
   if (args.options().empty())
-    caseSummary.all(Foam::Info, args);
+    caseSummary.all(Foam::Info, args, runTime);
 
   // Display initial conditions only
   if (args.found("initials"))
@@ -88,6 +93,10 @@ int main(int argc, char *argv[])
   // Display case info
   if (args.found("general"))
     caseSummary.generalInfo(Foam::Info, args);
+
+  // Display solver info
+  if (args.found("solver"))
+    caseSummary.solver(Foam::Info, runTime);
 
   Foam::Info << "\nEnd\n" << Foam::endl;
 }
@@ -151,9 +160,34 @@ void Foam::CaseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args
   delimiter(os);
 }
 
-void Foam::CaseSummary::all(Foam::Ostream &os, const Foam::argList &args) const
+void Foam::CaseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) const
+{
+  title("Solver settings");
+
+  // read controlDict
+  IOdictionary controlDict
+  (
+    IOobject
+    (
+      "controlDict",
+      runTime.system(),
+      runTime,
+      IOobject::MUST_READ,
+      IOobject::NO_WRITE
+    )
+  );
+
+  // get solver name
+  const word solverName(controlDict.get<word>("application"));
+
+  os.writeEntry("Solver name", solverName);
+  delimiter(os);
+}
+
+void Foam::CaseSummary::all(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
 {
   systemInfo(os);
   generalInfo(os, args);
   initials(os, args);
+  solver(os, runTime);
 }
