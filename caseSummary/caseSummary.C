@@ -37,6 +37,7 @@
 //#include "IOstreams.H"
 #include "IOdictionary.H"   // constructor from IOobject with readData/writeData functions
 
+#include "turbulenceProperties.H"
 #include "caseSummary.H"
 
 int main(int argc, char *argv[])
@@ -75,8 +76,8 @@ int main(int argc, char *argv[])
   //  Foam::Info << Foam::nl << "Test getLine" << Foam::nl << inputFile << Foam::nl;
   //}
 
-  // Crate a CaseSummary object
-  Foam::CaseSummary caseSummary {};
+  // Crate a caseSummary object
+  Foam::caseSummary caseSummary {};
 
   // Default display (no specific options provided)
   if (args.options().empty())
@@ -101,12 +102,12 @@ int main(int argc, char *argv[])
   Foam::Info << "\nEnd\n" << Foam::endl;
 }
 
-void Foam::CaseSummary::delimiter(Foam::Ostream &os) const
+void Foam::caseSummary::delimiter(Foam::Ostream &os) const
 {
   os << Foam::setw(120) << Foam::setfill('-') << Foam::endl;
 }
 
-void Foam::CaseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info) const
+void Foam::caseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info) const
 {
   for (char &letter:title)
     letter = std::toupper(letter);
@@ -114,7 +115,7 @@ void Foam::CaseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info
      << title << Foam::nl << Foam::endl;
 }
 
-void Foam::CaseSummary::systemInfo(Foam::Ostream &os) const
+void Foam::caseSummary::systemInfo(Foam::Ostream &os) const
 {
   title("About");
   Foam::string of {"OpenFOAM-"};
@@ -130,7 +131,7 @@ void Foam::CaseSummary::systemInfo(Foam::Ostream &os) const
   delimiter(os);
 }
 
-void Foam::CaseSummary::initials(Foam::Ostream &os, const Foam::argList &args) const
+void Foam::caseSummary::initials(Foam::Ostream &os, const Foam::argList &args) const
 {
   title("Phisics - initial conditions");
 
@@ -151,7 +152,7 @@ void Foam::CaseSummary::initials(Foam::Ostream &os, const Foam::argList &args) c
   //delete(zero_time);
 }
 
-void Foam::CaseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args) const
+void Foam::caseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args) const
 {
   title("Current Case");
   os.writeEntry("Case basename", args.caseName());
@@ -160,7 +161,7 @@ void Foam::CaseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args
   delimiter(os);
 }
 
-void Foam::CaseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) const
+void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) const
 {
   title("Solver settings");
 
@@ -179,12 +180,27 @@ void Foam::CaseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) con
 
   // get solver name
   const word solverName(controlDict.get<word>("application"));
-
   os.writeEntry("Solver name", solverName);
+
+  // read turbulenceProperties
+  IOdictionary turbulenceProperties
+  (
+    IOobject
+    (
+      "turbulenceProperties",
+      runTime.constant(),
+      runTime,
+      IOobject::MUST_READ,
+      IOobject::NO_WRITE
+    )
+  );
+  // write turbulenceProperties data
+  Foam::turbulenceProperties(runTime).write(os);
+
   delimiter(os);
 }
 
-void Foam::CaseSummary::all(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
+void Foam::caseSummary::all(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
 {
   systemInfo(os);
   generalInfo(os, args);

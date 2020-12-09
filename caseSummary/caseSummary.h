@@ -6,9 +6,9 @@
 namespace Foam
 {
   /*---------------------------------------------*\
-          class CaseSummary Declaration
+          class caseSummary Declaration
   \*---------------------------------------------*/
-  class CaseSummary
+  class caseSummary
   {
     // Private consts
     static const size_t FIRST_COL_WIDTH {30};
@@ -22,16 +22,16 @@ namespace Foam
     void title(string, Ostream&) const;
   public:
     // Constructors
-    CaseSummary() = default;
-    CaseSummary(const CaseSummary& other) = default;
-    CaseSummary(CaseSummary&& other) = default;
+    caseSummary() = default;
+    caseSummary(const caseSummary& other) = default;
+    caseSummary(caseSummary&& other) = default;
 
     // Default Operators
-    CaseSummary& operator=(const CaseSummary& other) = default;
-    CaseSummary& operator=(CaseSummary&& other) = default;
+    caseSummary& operator=(const caseSummary& other) = default;
+    caseSummary& operator=(caseSummary&& other) = default;
 
     // Destructor
-    ~CaseSummary() = default;
+    ~caseSummary() = default;
 
     // Public Member Functions
 
@@ -51,7 +51,7 @@ namespace Foam
     void all(Ostream &os, const argList&, const Time&) const;
   };
 
-  //extern CaseSummary caseSummary;
+  //extern caseSummary caseSummary;
 
 } // End namespace Foam
 
