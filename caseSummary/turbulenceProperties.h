@@ -23,7 +23,7 @@ class turbulenceProperties
   // Private data
 
   //- constant/turbulenceProperties dictionary
-  IOdictionary turbulenceProperties_;
+  const IOdictionary turbulenceProperties_;
 public:
 
   // Constructors

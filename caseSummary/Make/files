@@ -1,6 +1,7 @@
 boundaryInfo.C
 caseInfo.C
 
+controlDict.C
 turbulenceProperties.C
 caseSummary.C
 

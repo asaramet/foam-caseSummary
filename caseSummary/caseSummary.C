@@ -37,6 +37,7 @@
 //#include "IOstreams.H"
 #include "IOdictionary.H"   // constructor from IOobject with readData/writeData functions
 
+#include "controlDict.H"
 #include "turbulenceProperties.H"
 #include "caseSummary.H"
 
@@ -165,35 +166,9 @@ void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) con
 {
   title("Solver settings");
 
-  // read controlDict
-  IOdictionary controlDict
-  (
-    IOobject
-    (
-      "controlDict",
-      runTime.system(),
-      runTime,
-      IOobject::MUST_READ,
-      IOobject::NO_WRITE
-    )
-  );
+  // write controlDict solver data
+  Foam::controlDict(runTime).write(os);
 
-  // get solver name
-  const word solverName(controlDict.get<word>("application"));
-  os.writeEntry("Solver name", solverName);
-
-  // read turbulenceProperties
-  IOdictionary turbulenceProperties
-  (
-    IOobject
-    (
-      "turbulenceProperties",
-      runTime.constant(),
-      runTime,
-      IOobject::MUST_READ,
-      IOobject::NO_WRITE
-    )
-  );
   // write turbulenceProperties data
   Foam::turbulenceProperties(runTime).write(os);
 
