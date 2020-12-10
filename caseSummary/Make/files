@@ -3,6 +3,7 @@ caseInfo.C
 
 controlDict.C
 turbulenceProperties.C
+multiRegionProperties.C
 caseSummary.C
 
 EXE = $(FOAM_USER_APPBIN)/caseSummary

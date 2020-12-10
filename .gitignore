@@ -5,6 +5,7 @@ OpenFOAM-src
 # Compiler builds
 
 caseSummary/Make/linux64GccDPInt32Opt
+caseSummary/helpers
 
 # Redundant
 sample

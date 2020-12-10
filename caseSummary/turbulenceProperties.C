@@ -5,6 +5,7 @@
 #include "turbulenceProperties.H"
 #include "Time.H"
 #include "Ostream.H"
+//#include "turbulenceModel.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
@@ -15,6 +16,21 @@ Foam::turbulenceProperties::turbulenceProperties(const Foam::Time& runTime)
     IOobject
     (
       "turbulenceProperties",
+      runTime.constant(),
+      runTime,
+      IOobject::MUST_READ,
+      IOobject::NO_WRITE
+    )
+  }
+ {}
+
+Foam::turbulenceProperties::turbulenceProperties(const Foam::Time& runTime, const Foam::word& regionName) 
+:
+  turbulenceProperties_
+  {
+    IOobject
+    (
+      regionName/"turbulenceProperties",
       runTime.constant(),
       runTime,
       IOobject::MUST_READ,

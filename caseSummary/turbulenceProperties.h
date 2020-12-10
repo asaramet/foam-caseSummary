@@ -26,8 +26,9 @@ class turbulenceProperties
   const IOdictionary turbulenceProperties_;
 public:
 
-  // Constructors
+  // Overided Constructors
   turbulenceProperties(const Time& runTime);
+  turbulenceProperties(const Time& runTime, const word& regionName);
 
   turbulenceProperties(const turbulenceProperties& other) = default;
   turbulenceProperties(turbulenceProperties&& other) = default;

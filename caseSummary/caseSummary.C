@@ -36,10 +36,12 @@
 //#include "includeEntry.H"
 //#include "IOstreams.H"
 #include "IOdictionary.H"   // constructor from IOobject with readData/writeData functions
+#include "timeSelector.H"   // list of scalarRange for selecting times
 
 #include "controlDict.H"
 #include "turbulenceProperties.H"
 #include "caseSummary.H"
+#include "multiRegionProperties.H"
 
 int main(int argc, char *argv[])
 {
@@ -64,21 +66,22 @@ int main(int argc, char *argv[])
   Foam::argList::addBoolOption("", "Display all collected information");
 
   // Create an argList Object ("setRootCase.H")
-  Foam::argList args(argc, argv);
+  const Foam::argList args(argc, argv);
   // Check root path and case path
   if (!args.checkRootCase())
     Foam::FatalError.exit();
 
-  // Create run Time Object from default controlDict ("createTime.H")
-  Foam::Time runTime(Foam::Time::controlDictName, args);
+  // select multiple times. First option adds explicitly -constant, second removes -withZero
+  Foam::timeSelector::addOptions(true, false);
 
-  //{
-  //  const Foam::fileName inputFile { Foam::findEtcFile("controlDict", true, 0007) };
-  //  Foam::Info << Foam::nl << "Test getLine" << Foam::nl << inputFile << Foam::nl;
-  //}
+  // Create run Time Object from default controlDict ("createTime.H")
+  Foam::Time runTime {Foam::Time::controlDictName, args};
+
+  // Allow overwrite of times and set runTime to the first instance
+  Foam::instantList times = Foam::timeSelector::selectIfPresent(runTime, args);
 
   // Crate a caseSummary object
-  Foam::caseSummary caseSummary {};
+  const Foam::caseSummary caseSummary {};
 
   // Default display (no specific options provided)
   if (args.options().empty())
@@ -170,7 +173,18 @@ void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) con
   Foam::controlDict(runTime).write(os);
 
   // write turbulenceProperties data
-  Foam::turbulenceProperties(runTime).write(os);
+  if (Foam::fileHandler().isFile(runTime.constant()/"turbulenceProperties"))
+  {
+    os << "Turbulence properties:" << Foam::endl;
+    Foam::turbulenceProperties(runTime).write(os);
+  }
+
+  // write multi region turbulenceProperties data
+  if (Foam::fileHandler().isFile(runTime.constant()/"regionProperties"))
+  {
+    os << "Defined regions:" << Foam::endl;
+    Foam::multiRegionProperties(runTime).write(os);
+  }
 
   delimiter(os);
 }

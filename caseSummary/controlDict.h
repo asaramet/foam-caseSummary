@@ -8,11 +8,12 @@ Description
 
 \*---------------------------------------------------------------------------*/
 #include "dictionary.H"
+#include "Time.H"
 
 namespace Foam
 {
   // dummy
-  class Time;
+  //class Time;
 
 /*---------------------------------------------------------------------------*\
                       Class controlDict Declaration
@@ -22,8 +23,11 @@ class controlDict
 {
   // Private data
 
+  //- case Time Object
+  const Time& runTime_;
+
   //- system/controlDict dictionary
-  const dictionary controlDict_;
+  const dictionary controlDict_ { runTime_.controlDict() };
 public:
 
   // Constructors
@@ -43,6 +47,10 @@ public:
 
   // Display data
   void write(Ostream &os) const;
+
+  // TODO: display run-time loadable functionality i.e:
+  //- TODO: read 'functions' from controlDict
+  //- TODO: read 'libs' from controlDict
 };
 
 
