@@ -7,6 +7,9 @@ Description
   Class to collect simulation data from system/controlDict
 
 \*---------------------------------------------------------------------------*/
+#ifndef CONTROLDIC_H
+#define CONTROLDIC_H
+
 #include "dictionary.H"
 #include "Time.H"
 
@@ -55,3 +58,5 @@ public:
 
 
 } // End namespace Foam
+
+#endif // CONTROLDIC_H

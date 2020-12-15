@@ -7,6 +7,8 @@ Description
   Class to collect region information usually must have constant/regionProperties dict
 
 \*---------------------------------------------------------------------------*/
+#ifndef MULTIREGIONPROPERIES_H
+#define MULTIREGIONPROPERIES_H
 
 #include "regionProperties.H"
 
@@ -57,3 +59,5 @@ public:
 };
 
 } // End namespace Foam
+
+#endif // MULTIREGIONPROPERIES_H

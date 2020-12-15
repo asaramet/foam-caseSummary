@@ -177,6 +177,7 @@ void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) con
   {
     os << "Turbulence properties:" << Foam::endl;
     Foam::turbulenceProperties(runTime).write(os);
+    os << Foam::endl;
   }
 
   // write multi region turbulenceProperties data

@@ -24,7 +24,7 @@ Foam::turbulenceProperties::turbulenceProperties(const Foam::Time& runTime)
   }
  {}
 
-Foam::turbulenceProperties::turbulenceProperties(const Foam::Time& runTime, const Foam::word& regionName) 
+Foam::turbulenceProperties::turbulenceProperties(const Foam::Time& runTime, const Foam::word& regionName)
 :
   turbulenceProperties_
   {
@@ -54,7 +54,7 @@ void Foam::turbulenceProperties::write(Foam::Ostream& os) const
   }
 
   // get the model type sub-dict
-  const dictionary modelDict { turbulenceProperties_.subDict(simulationType)};
+  const dictionary modelDict { turbulenceProperties_.subDict(simulationType) };
 
   if (simulationType == "RAS")
   {

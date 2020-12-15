@@ -1,6 +1,3 @@
-boundaryInfo.C
-caseInfo.C
-
 controlDict.C
 turbulenceProperties.C
 multiRegionProperties.C

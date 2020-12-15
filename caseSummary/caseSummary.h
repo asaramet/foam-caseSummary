@@ -1,7 +1,17 @@
-#ifndef _CASESUMMARY_H_
+/*---------------------------------------------------------------------------*\
+
+Class
+  Foam::caseSummary
+
+Description
+  Class to collect and display OpenFOAM case settings and configuration
+
+\*---------------------------------------------------------------------------*/
+
+#ifndef CASESUMMARY_H
+#define CASESUMMARY_H
 
 #include "argList.H"
-#include "boundaryInfo.H"
 
 namespace Foam
 {
@@ -55,4 +65,4 @@ namespace Foam
 
 } // End namespace Foam
 
-#endif // _CASESUMMARY_H_
+#endif // CASESUMMARY_H
