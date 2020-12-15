@@ -25,10 +25,10 @@ void Foam::multiRegionProperties::write(Foam::Ostream& os) const
 
   forAll(names_, regID)
   {
-    os.writeEntry("Region", names_[regID]);
-    Foam::turbulenceProperties(runTime_, names_[regID]).write(os);
+    Foam::word regionName { names_[regID] };
+    os.writeEntry("Region", regionName);
+    Foam::turbulenceProperties(runTime_, regionName).write(os);
 
-    os << "TODO: Transport Properties for " << names_[regID] << Foam::endl;
     os << Foam::endl;
   }
 

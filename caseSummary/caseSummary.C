@@ -42,6 +42,7 @@
 #include "turbulenceProperties.H"
 #include "caseSummary.H"
 #include "multiRegionProperties.H"
+#include "transportProperties.H"
 
 int main(int argc, char *argv[])
 {
@@ -186,6 +187,9 @@ void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) con
     os << "Defined regions:" << Foam::endl;
     Foam::multiRegionProperties(runTime).write(os);
   }
+
+  if (Foam::fileHandler().isFile(runTime.constant()/"transportProperties"))
+    Foam::transportProperties(runTime).write(os);
 
   delimiter(os);
 }
