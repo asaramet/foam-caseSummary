@@ -6,6 +6,7 @@
 #include "Time.H"
 #include "Ostream.H"
 //#include "transportModel.H"
+//#include "interfaceProperties.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
@@ -45,7 +46,15 @@ void Foam::transportProperties::write(Foam::Ostream& os) const
 {
   os << "Transport properties:" << Foam::endl;
   os.writeEntry("Model", transportProperties_.get<Foam::word>("transportModel"));
-  //os.writeEntry("nu", transportProperties_.get<Foam::scalarField>("nu"));
+
+  if (transportProperties_.found("nu"))
+  {
+    Foam::dimensionedScalar nu { transportProperties_.get<Foam::dimensionedScalar>("nu") };
+    os.writeEntry("nu", nu.value());
+    os.writeEntry("nu dim/list", nu.dimensions());
+  }
+
+  // TODO: Get the coefficients if any
 
   os << Foam::endl;
 }
