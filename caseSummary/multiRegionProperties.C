@@ -27,6 +27,8 @@ void Foam::multiRegionProperties::write(Foam::Ostream& os) const
   {
     Foam::word regionName { names_[regID] };
     os.writeEntry("Region", regionName);
+
+    os << " Turbulence:" << Foam::endl;
     Foam::turbulenceProperties(runTime_, regionName).write(os);
 
     os << Foam::endl;

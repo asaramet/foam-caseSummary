@@ -48,28 +48,37 @@ void Foam::turbulenceProperties::write(Foam::Ostream& os) const
   if (simulationType == "laminar")
   {
     // display that flow is laminar and exit
-    os.writeEntry("Flow", simulationType);
+    os.writeEntry(" Flow", simulationType);
     return;
   }
 
-  // get the model type sub-dict
-  const dictionary modelDict { turbulenceProperties_.subDict(simulationType) };
+  // a temporary word variable
+  Foam::word tempWord {};
 
-  if (simulationType == "RAS")
-  {
-    os.writeEntry("Flow", "turbulent RAS");
-    os.writeEntry("RAS Model", modelDict.getOrDefault<word>("RASModel", "Warning: RASModel is not defined in turbulenceProperties"));
+  // display the turbulent flow
+  tempWord = "turbulent " + simulationType;
+  os.writeEntry(" Flow", tempWord);
 
-    word modelCoeff = modelDict.getOrDefault<word>("RASModel", "not found") + "Coeff";
+  // get the model type sub-dict as a unique pointer
+  std::unique_ptr<Foam::dictionary> modelDict {new Foam::dictionary {turbulenceProperties_.findDict(simulationType)}};
 
-    os.writeEntry("COEFF", modelCoeff);
-  }
+  if (!modelDict) return; // if there is no model sub dictionary leave it
 
-  if (simulationType == "LES")
-  {
-    os.writeEntry("Flow", "turbulent LES");
-    os.writeEntry("LES Model", modelDict.getOrDefault<word>("LESModel", "Warning: LESModel is not defined in turbulenceProperties"));
-  }
+  os.writeEntry("  Turbulence", modelDict->getOrDefault<word>("turbulence", "Warning: missing turbulence keyword in turbulenceProperties"));
+  if (modelDict->readIfPresent("printCoeffs", tempWord))
+    os.writeEntry("  Print coeffs", tempWord);
 
-  os.writeEntry("turbulence", modelDict.getOrDefault<word>("turbulence", "Warning: missing turbulence keyword in turbulenceProperties"));
+  // display the model type
+  tempWord = simulationType + "Model";
+  if (modelDict->found(tempWord))
+    os.writeEntry("  Model", modelDict->get<word>(tempWord));
+
+  // get the model coeff dict as a unique pointer
+  tempWord += "Coeffs";
+  std::unique_ptr<Foam::dictionary> modelCoeffs {new Foam::dictionary {modelDict->findDict(tempWord)}};
+  if (!modelCoeffs) return; // if there is no model coeffs sub dictionary leave it
+
+  os << "  Model coeffs:" << Foam::endl;
+  os.writeEntry("  Model coeffs", modelCoeffs->name());
+
 }

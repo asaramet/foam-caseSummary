@@ -27,6 +27,7 @@ class turbulenceProperties
 
   //- constant/turbulenceProperties dictionary
   const IOdictionary turbulenceProperties_;
+
 public:
 
   // Overided Constructors

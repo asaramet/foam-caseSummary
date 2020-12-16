@@ -45,13 +45,13 @@ Foam::transportProperties::transportProperties(const Foam::Time& runTime, const 
 void Foam::transportProperties::write(Foam::Ostream& os) const
 {
   os << "Transport properties:" << Foam::endl;
-  os.writeEntry("Model", transportProperties_.get<Foam::word>("transportModel"));
+  os.writeEntry(" Model", transportProperties_.get<Foam::word>("transportModel"));
 
   if (transportProperties_.found("nu"))
   {
-    Foam::dimensionedScalar nu { transportProperties_.get<Foam::dimensionedScalar>("nu") };
-    os.writeEntry("nu", nu.value());
-    os.writeEntry("nu dim/list", nu.dimensions());
+    const Foam::dimensionedScalar nu { transportProperties_.get<Foam::dimensionedScalar>("nu") };
+    os.writeEntry(" nu", nu.value());
+    os.writeEntry(" nu dim/list", nu.dimensions());
   }
 
   // TODO: Get the coefficients if any
