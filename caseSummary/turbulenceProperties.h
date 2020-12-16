@@ -48,6 +48,9 @@ public:
 
   // Display data
   void write(Ostream &os) const;
+
+  // recursivley display a dictionary data
+  void writeDicts(Ostream& os, dictionary& mainDict, word displacement = " ") const;
 };
 
 

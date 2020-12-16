@@ -5,6 +5,7 @@
 #include "turbulenceProperties.H"
 #include "Time.H"
 #include "Ostream.H"
+#include "dictionaryEntry.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
@@ -45,40 +46,56 @@ void Foam::turbulenceProperties::write(Foam::Ostream& os) const
   // get flow type (laminar or turbulent)
   const word simulationType { turbulenceProperties_.get<word>("simulationType") };
 
-  if (simulationType == "laminar")
-  {
-    // display that flow is laminar and exit
-    os.writeEntry(" Flow", simulationType);
-    return;
-  }
-
-  // a temporary word variable
-  Foam::word tempWord {};
-
-  // display the turbulent flow
-  tempWord = "turbulent " + simulationType;
-  os.writeEntry(" Flow", tempWord);
+  // display flow type
+  os << " ";
+  os.writeEntry("Flow", simulationType);
 
   // get the model type sub-dict as a unique pointer
   std::unique_ptr<Foam::dictionary> modelDict {new Foam::dictionary {turbulenceProperties_.findDict(simulationType)}};
 
-  if (!modelDict) return; // if there is no model sub dictionary leave it
+  if (modelDict->empty()) return; // if there is no model sub dictionary leave it
 
-  os.writeEntry("  Turbulence", modelDict->getOrDefault<word>("turbulence", "Warning: missing turbulence keyword in turbulenceProperties"));
-  if (modelDict->readIfPresent("printCoeffs", tempWord))
-    os.writeEntry("  Print coeffs", tempWord);
+  Foam::wordList toc_ {modelDict->toc()};
 
-  // display the model type
-  tempWord = simulationType + "Model";
-  if (modelDict->found(tempWord))
-    os.writeEntry("  Model", modelDict->get<word>(tempWord));
+  writeDicts(os, *modelDict);
+  //modelDict->writeEntries(os);
 
-  // get the model coeff dict as a unique pointer
-  tempWord += "Coeffs";
-  std::unique_ptr<Foam::dictionary> modelCoeffs {new Foam::dictionary {modelDict->findDict(tempWord)}};
-  if (!modelCoeffs) return; // if there is no model coeffs sub dictionary leave it
+} // end write(os&)
 
-  os << "  Model coeffs:" << Foam::endl;
-  os.writeEntry("  Model coeffs", modelCoeffs->name());
+void Foam::turbulenceProperties::writeDicts(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word title_displacement) const
+{
+  // stop if dictionary is empty
+  if (mainDict.empty())
+    return;
 
+  // set displacement
+  title_displacement += " ";
+
+  // get the dictionary table of contents
+  Foam::wordList toc_ {mainDict.toc()};
+
+  // loop through contents and display them
+  forAll(toc_, id)
+  {
+    // create a pointer to dictionary entry (it's freed by default in Destructor)
+    Foam::entry* subEntry {mainDict.findEntry(toc_[id])};
+
+    // write entry data if it's not a sub-dictionary
+    if (subEntry->isStream())
+    {
+      // get entry keyword and save as title
+      Foam::word keyword_ {subEntry->keyword()};
+
+      os << title_displacement;
+      subEntry->write(os);
+    }
+
+    // recursivley process it again if it's a sub-dictionary
+    if (subEntry->isDict())
+    {
+      os << title_displacement << toc_[id] << Foam::endl;
+      Foam::dictionary* dictPtr_ {subEntry->dictPtr()};
+      writeDicts(os, *dictPtr_, title_displacement);
+    }
+  }
 }

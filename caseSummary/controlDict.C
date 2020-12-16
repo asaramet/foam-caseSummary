@@ -64,41 +64,76 @@ void Foam::controlDict::write(Foam::Ostream& os) const
   if (controlDict_.readIfPresent("adjustTimeStep", tempWord))
   {
     os << "Transient simulation control:" << endl;
-    os.writeEntry(" Adjust T step", tempWord);
+    os << " ";
+    os.writeEntry("Adjust T step", tempWord);
   }
   if (controlDict_.readIfPresent("maxCo", tempScalar))
-    os.writeEntry(" Max Courant nr", tempScalar);
+  {
+    os << " ";
+    os.writeEntry("Max Courant nr", tempScalar);
+  }
   if (controlDict_.readIfPresent("maxDeltaT", tempScalar))
-    os.writeEntry(" Max time step", tempScalar);
+  {
+    os << " ";
+    os.writeEntry("Max time step", tempScalar);
+  }
   os << endl;
 
   // display write settings
   os << "Write settings:" << endl;
   if (controlDict_.readIfPresent("writeControl", tempWord))
-    os.writeEntry(" Control", tempWord);
+  {
+    os << " ";
+    os.writeEntry("Control", tempWord);
+  }
   if (controlDict_.readIfPresent("writeInterval", tempScalar))
-    os.writeEntry(" Interval", tempScalar);
+  {
+    os << " ";
+    os.writeEntry("Interval", tempScalar);
+  }
   if (controlDict_.readIfPresent("writeFormat", tempWord))
-    os.writeEntry(" Data format", tempWord);
+  {
+    os << " ";
+    os.writeEntry("Data format", tempWord);
+  }
   if (controlDict_.readIfPresent("writePrecision", tempScalar))
-    os.writeEntry(" Precision", tempScalar);
+  {
+    os << " ";
+    os.writeEntry("Precision", tempScalar);
+  }
   if (controlDict_.readIfPresent("purgeWrite", tempScalar))
-    os.writeEntry(" Store folders", tempScalar);
+  {
+    os << " ";
+    os.writeEntry("Store folders", tempScalar);
+  }
   if (controlDict_.readIfPresent("writeCompression", tempWord))
-    os.writeEntry(" Compression", tempWord);
+  {
+    os << " ";
+    os.writeEntry("Compression", tempWord);
+  }
   if (controlDict_.readIfPresent("timeFormat", tempWord))
-    os.writeEntry(" Naming format", tempWord);
+  {
+    os << " ";
+    os.writeEntry("Naming format", tempWord);
+  }
   if (controlDict_.readIfPresent("timePrecision", tempScalar))
-    os.writeEntry(" Naming prec", tempScalar);
+  {
+    os << " ";
+    os.writeEntry("Naming prec", tempScalar);
+  }
   if (controlDict_.readIfPresent("graphFormat", tempWord))
-    os.writeEntry(" Graph data", tempWord);
+  {
+    os << " ";
+    os.writeEntry("Graph data", tempWord);
+  }
   os << endl;
 
   // display data reading
   if (controlDict_.readIfPresent("runTimeModifiable", tempWord))
   {
     os << "Data reading:" << endl;
-    os.writeEntry(" Re-read dicts", tempWord);
+    os << " ";
+    os.writeEntry("Re-read dicts", tempWord);
     os << endl;
   }
 
