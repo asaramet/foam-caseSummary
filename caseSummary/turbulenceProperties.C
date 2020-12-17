@@ -3,6 +3,7 @@
 \*---------------------------------------------------------------------------*/
 
 #include "turbulenceProperties.H"
+#include "helperFunctions.H"
 #include "Time.H"
 #include "Ostream.H"
 #include "dictionaryEntry.H"
@@ -57,45 +58,7 @@ void Foam::turbulenceProperties::write(Foam::Ostream& os) const
 
   Foam::wordList toc_ {modelDict->toc()};
 
-  writeDicts(os, *modelDict);
+  Foam::writeDicts_(os, *modelDict);
   //modelDict->writeEntries(os);
 
 } // end write(os&)
-
-void Foam::turbulenceProperties::writeDicts(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word title_displacement) const
-{
-  // stop if dictionary is empty
-  if (mainDict.empty())
-    return;
-
-  // set displacement
-  title_displacement += " ";
-
-  // get the dictionary table of contents
-  Foam::wordList toc_ {mainDict.toc()};
-
-  // loop through contents and display them
-  forAll(toc_, id)
-  {
-    // create a pointer to dictionary entry (it's freed by default in Destructor)
-    Foam::entry* subEntry {mainDict.findEntry(toc_[id])};
-
-    // write entry data if it's not a sub-dictionary
-    if (subEntry->isStream())
-    {
-      // get entry keyword and save as title
-      Foam::word keyword_ {subEntry->keyword()};
-
-      os << title_displacement;
-      subEntry->write(os);
-    }
-
-    // recursivley process it again if it's a sub-dictionary
-    if (subEntry->isDict())
-    {
-      os << title_displacement << toc_[id] << Foam::endl;
-      Foam::dictionary* dictPtr_ {subEntry->dictPtr()};
-      writeDicts(os, *dictPtr_, title_displacement);
-    }
-  }
-}

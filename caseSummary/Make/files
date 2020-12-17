@@ -1,3 +1,4 @@
+helperFunctions.C
 controlDict.C
 turbulenceProperties.C
 multiRegionProperties.C
