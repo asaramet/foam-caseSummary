@@ -56,9 +56,7 @@ void Foam::turbulenceProperties::write(Foam::Ostream& os) const
 
   if (modelDict->empty()) return; // if there is no model sub dictionary leave it
 
-  Foam::wordList toc_ {modelDict->toc()};
-
-  Foam::writeDicts_(os, *modelDict);
+  Foam::writeDicts_(os, *modelDict, " ");
   //modelDict->writeEntries(os);
 
 } // end write(os&)

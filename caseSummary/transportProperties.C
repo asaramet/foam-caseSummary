@@ -3,10 +3,9 @@
 \*---------------------------------------------------------------------------*/
 
 #include "transportProperties.H"
+#include "helperFunctions.H"
 #include "Time.H"
 #include "Ostream.H"
-//#include "transportModel.H"
-//#include "interfaceProperties.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
@@ -45,19 +44,9 @@ Foam::transportProperties::transportProperties(const Foam::Time& runTime, const 
 void Foam::transportProperties::write(Foam::Ostream& os) const
 {
   os << "Transport properties:" << Foam::endl;
-  os << " ";
-  os.writeEntry("Model", transportProperties_.get<Foam::word>("transportModel"));
 
-  if (transportProperties_.found("nu"))
-  {
-    const Foam::dimensionedScalar nu { transportProperties_.get<Foam::dimensionedScalar>("nu") };
-    os << " ";
-    os.writeEntry("nu", nu.value());
-    os << " ";
-    os.writeEntry("nu dim/list", nu.dimensions());
-  }
-
-  // TODO: Get the coefficients if any
+  std::unique_ptr<Foam::dictionary> transportDict { new Foam::dictionary {transportProperties_ }};
+  Foam::writeDicts_(os, *transportDict);
 
   os << Foam::endl;
 }

@@ -58,11 +58,11 @@ void Foam::controlDict::write(Foam::Ostream& os) const
 
   //- display the corresponding value
   os.writeEntry("Stop", stopAtValues[stopAtIndex]);
-  os << endl;
 
   // display transient simulation controls if any
   if (controlDict_.readIfPresent("adjustTimeStep", tempWord))
   {
+    os << endl;
     os << "Transient simulation control:" << endl;
     os << " ";
     os.writeEntry("Adjust T step", tempWord);
@@ -77,8 +77,8 @@ void Foam::controlDict::write(Foam::Ostream& os) const
     os << " ";
     os.writeEntry("Max time step", tempScalar);
   }
-  os << endl;
 
+  os << endl;
   // display write settings
   os << "Write settings:" << endl;
   if (controlDict_.readIfPresent("writeControl", tempWord))
@@ -126,16 +126,15 @@ void Foam::controlDict::write(Foam::Ostream& os) const
     os << " ";
     os.writeEntry("Graph data", tempWord);
   }
-  os << endl;
 
   // display data reading
   if (controlDict_.readIfPresent("runTimeModifiable", tempWord))
   {
+    os << endl;
     os << "Data reading:" << endl;
     os << " ";
     os.writeEntry("Re-read dicts", tempWord);
-    os << endl;
   }
 
-
+  os << endl;
 }

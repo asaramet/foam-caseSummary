@@ -11,6 +11,7 @@ Description
 #define HELPERFUNCTIONS_H
 
 #include "IOdictionary.H"
+#include "Ostream.H"
 
 namespace Foam
 {
@@ -21,7 +22,7 @@ namespace Foam
 
 
   // recursivley display a dictionary data
-  void writeDicts_(Ostream& os, dictionary& mainDict, word displacement = " ");
+  void writeDicts_(Ostream& os, dictionary& mainDict, word displacement = "");
 
 
 } // End namespace Foam
