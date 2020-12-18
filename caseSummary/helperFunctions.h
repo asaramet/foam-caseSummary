@@ -7,8 +7,8 @@ Description
   Functions used in multiple instances
 
 \*---------------------------------------------------------------------------*/
-#ifndef HELPERFUNCTIONS_H
-#define HELPERFUNCTIONS_H
+#ifndef HELPER_FUNCTIONS_H
+#define HELPER_FUNCTIONS_H
 
 namespace Foam
 {
@@ -26,4 +26,4 @@ namespace Foam
 
 } // End namespace Foam
 
-#endif // HELPERFUNCTIONS_H
+#endif // HELPER_FUNCTIONS_H

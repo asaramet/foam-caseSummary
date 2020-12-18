@@ -7,8 +7,8 @@ Description
   Class to collect simulation data from constant/turbulenceProperties
 
 \*---------------------------------------------------------------------------*/
-#ifndef TURBULENCEPROPERTIES_H
-#define TURBULENCEPROPERTIES_H
+#ifndef TURBULENCE_PROPERTIES_H
+#define TURBULENCE_PROPERTIES_H
 
 #include "IOdictionary.H"
 
@@ -53,4 +53,4 @@ public:
 
 } // End namespace Foam
 
-#endif // TURBULENCEPROPERTIES_H
+#endif // TURBULENCE_PROPERTIES_H

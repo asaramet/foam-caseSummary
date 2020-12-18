@@ -8,8 +8,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CASESUMMARY_H
-#define CASESUMMARY_H
+#ifndef CASE_SUMMARY_H
+#define CASE_SUMMARY_H
 
 #include "argList.H"
 
@@ -65,4 +65,4 @@ namespace Foam
 
 } // End namespace Foam
 
-#endif // CASESUMMARY_H
+#endif // CASE_SUMMARY_H

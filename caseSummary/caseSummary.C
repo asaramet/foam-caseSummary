@@ -44,6 +44,7 @@
 #include "multiRegionProperties.H"
 #include "transportProperties.H"
 #include "extraFields.H"
+#include "boundaryConditions.H"
 
 int main(int argc, char *argv[])
 {
@@ -140,12 +141,15 @@ void Foam::caseSummary::systemInfo(Foam::Ostream &os) const
 
 void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
 {
-  title("Phisics - initial conditions");
 
-  // TODO
-  Foam::Info << "Case Regions: \n i.e U, p, rho etc\n" << Foam::nl;
-  Foam::Info << "Case Patches\n";
-
+  // display initial conditions
+  if (Foam::fileHandler().isDir(runTime.timeName(0)))
+  {
+    title("Phisics - initial conditions");
+    os << "Yeee" << Foam::endl;
+    Foam::boundaryConditions(runTime).write(os);
+    delimiter(os);
+  }
   // create an unique pointer to the case endTime (using root/case path)
   //std::unique_ptr<Foam::Time> zero_time { new Foam::Time(args.rootPath(), args.caseName()) };
   //if (!zero_time) return;
@@ -153,7 +157,6 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
   //auto obj = Foam::objectRegistry(*zero_time);
   //auto ioobj = IOobject()
 
-  delimiter(os);
 
   // display turbulenceProperties data
   if (Foam::fileHandler().isFile(runTime.constant()/"turbulenceProperties"))

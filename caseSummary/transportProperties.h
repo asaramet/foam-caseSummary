@@ -7,8 +7,8 @@ Description
   Class to collect simulation data from constant/transportProperties
 
 \*---------------------------------------------------------------------------*/
-#ifndef TRANSPORTPROPERTIES_H
-#define TRANSPORTPROPERTIES_H
+#ifndef TRANSPORT_PROPERTIES_H
+#define TRANSPORT_PROPERTIES_H
 
 #include "IOdictionary.H"
 
@@ -53,4 +53,4 @@ public:
 
 } // End namespace Foam
 
-#endif // TRANSPORTPROPERTIES_H
+#endif // TRANSPORT_PROPERTIES_H
