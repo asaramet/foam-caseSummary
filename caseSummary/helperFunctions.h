@@ -10,11 +10,10 @@ Description
 #ifndef HELPERFUNCTIONS_H
 #define HELPERFUNCTIONS_H
 
-#include "IOdictionary.H"
-#include "Ostream.H"
-
 namespace Foam
 {
+  // dummy
+  class Ostream;
 
 /*---------------------------------------------------------------------------*\
                       Functions Declaration

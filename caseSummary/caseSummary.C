@@ -17,6 +17,9 @@
        - \par -phisics
          Display case phisics
 
+       - \par -solver
+         Display solver settings
+
        - \par
          Display all the data
  \*---------------------------------------------------------------------------*/
@@ -40,6 +43,7 @@
 #include "caseSummary.H"
 #include "multiRegionProperties.H"
 #include "transportProperties.H"
+#include "extraFields.H"
 
 int main(int argc, char *argv[])
 {
@@ -162,8 +166,7 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
   // display multi region turbulenceProperties data
   if (Foam::fileHandler().isFile(runTime.constant()/"regionProperties"))
   {
-    title("Phisics - Turbulence Properties");
-    os << "Defined regions:" << Foam::endl;
+    title("Phisics - Regions Turbulence Properties");
     Foam::multiRegionProperties(runTime).write(os);
     delimiter(os);
   }
@@ -175,6 +178,16 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
     Foam::transportProperties(runTime).write(os);
     delimiter(os);
   }
+
+  // display gravity
+  if (Foam::fileHandler().isFile(runTime.constant()/"g"))
+  {
+    title("Phisics - Extra fields");
+    Foam::extraFields(runTime).write(os);
+    delimiter(os);
+  }
+
+
 }
 
 void Foam::caseSummary::caseInfo(Foam::Ostream &os, const Foam::argList &args) const

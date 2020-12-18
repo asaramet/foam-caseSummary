@@ -2,9 +2,10 @@
 
 \*---------------------------------------------------------------------------*/
 
-#include "controlDict.H"
 #include "Time.H"
 #include "Ostream.H"
+
+#include "controlDict.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 

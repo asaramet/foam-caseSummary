@@ -2,8 +2,9 @@
 
 \*---------------------------------------------------------------------------*/
 
-#include "helperFunctions.H"
+#include "Ostream.H"
 
+#include "helperFunctions.H"
 #include "dictionaryEntry.H"
 
 void Foam::writeDicts_(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word title_displacement, int step)

@@ -2,10 +2,11 @@
 
 \*---------------------------------------------------------------------------*/
 
-#include "multiRegionProperties.H"
-#include "turbulenceProperties.H"
 #include "Time.H"
 #include "Ostream.H"
+
+#include "multiRegionProperties.H"
+#include "turbulenceProperties.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
@@ -28,9 +29,7 @@ void Foam::multiRegionProperties::write(Foam::Ostream& os) const
     Foam::word regionName { names_[regID] };
     os.writeEntry("Region", regionName);
 
-    os << " Turbulence:" << Foam::endl;
     Foam::turbulenceProperties(runTime_, regionName).write(os);
-
     os << Foam::endl;
   }
 

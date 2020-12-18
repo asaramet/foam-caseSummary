@@ -11,12 +11,11 @@ Description
 #define CONTROLDIC_H
 
 #include "dictionary.H"
-#include "Time.H"
 
 namespace Foam
 {
   // dummy
-  //class Time;
+  class Time;
 
 /*---------------------------------------------------------------------------*\
                       Class controlDict Declaration
