@@ -43,10 +43,6 @@ Foam::transportProperties::transportProperties(const Foam::Time& runTime, const 
 
 void Foam::transportProperties::write(Foam::Ostream& os) const
 {
-  os << "Transport properties:" << Foam::endl;
-
   std::unique_ptr<Foam::dictionary> transportDict { new Foam::dictionary {transportProperties_ }};
   Foam::writeDicts_(os, *transportDict);
-
-  os << Foam::endl;
 }

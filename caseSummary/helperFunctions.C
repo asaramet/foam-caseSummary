@@ -6,17 +6,21 @@
 
 #include "dictionaryEntry.H"
 
-void Foam::writeDicts_(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word title_displacement)
+void Foam::writeDicts_(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word title_displacement, int step)
 {
   // stop if dictionary is empty
   if (mainDict.empty())
     return;
 
-  // set displacement
-  title_displacement += " ";
-
   // get the dictionary table of contents
   Foam::wordList toc_ {mainDict.toc()};
+
+  // upgrade recursive step
+  step += 1;
+
+  // set displacement
+  if (step > 1)
+    title_displacement += " ";
 
   // loop through contents and display them
   forAll(toc_, id)
@@ -39,8 +43,7 @@ void Foam::writeDicts_(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word
     {
       os << title_displacement << toc_[id] << Foam::endl;
       Foam::dictionary* dictPtr_ {subEntry->dictPtr()};
-      writeDicts_(os, *dictPtr_, title_displacement);
+      writeDicts_(os, *dictPtr_, title_displacement, step);
     }
-
-  }
+  } // end forAll
 }

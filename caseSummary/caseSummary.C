@@ -11,8 +11,11 @@
        - \par -system
          Display system information
 
-       - \par -initials
-         Display initial conditions only
+       - \par -caseInfo
+         Display case information
+
+       - \par -phisics
+         Display case phisics
 
        - \par
          Display all the data
@@ -29,12 +32,6 @@
 #include "Time.H"
 
 #include "etcFiles.H"
-//#include "IOstream.H"     // iostream
-//#include "profiling.H"
-//#include "Time.H"
-//#include "Fstream.H"
-//#include "includeEntry.H"
-//#include "IOstreams.H"
 #include "IOdictionary.H"   // constructor from IOobject with readData/writeData functions
 #include "timeSelector.H"   // list of scalarRange for selecting times
 
@@ -61,8 +58,8 @@ int main(int argc, char *argv[])
 
   //- add options (command arguments)
   Foam::argList::addBoolOption("system", "Display system information");
-  Foam::argList::addBoolOption("general", "Display general case information");
-  Foam::argList::addBoolOption("initials", "Display initial conditions only");
+  Foam::argList::addBoolOption("caseInfo", "Display case information");
+  Foam::argList::addBoolOption("phisics", "Display case phisics");
   Foam::argList::addBoolOption("solver", "Display solver settings");
   Foam::argList::addBoolOption("", "Display all collected information");
 
@@ -88,17 +85,17 @@ int main(int argc, char *argv[])
   if (args.options().empty())
     caseSummary.all(Foam::Info, args, runTime);
 
-  // Display initial conditions only
-  if (args.found("initials"))
-    caseSummary.initials(Foam::Info, args);
+  // Display case physics
+  if (args.found("phisics"))
+    caseSummary.phisics(Foam::Info, args, runTime);
 
   // Display cpu info
   if (args.found("system"))
     caseSummary.systemInfo(Foam::Info);
 
   // Display case info
-  if (args.found("general"))
-    caseSummary.generalInfo(Foam::Info, args);
+  if (args.found("caseInfo"))
+    caseSummary.caseInfo(Foam::Info, args);
 
   // Display solver info
   if (args.found("solver"))
@@ -109,7 +106,8 @@ int main(int argc, char *argv[])
 
 void Foam::caseSummary::delimiter(Foam::Ostream &os) const
 {
-  os << Foam::setw(120) << Foam::setfill('-') << Foam::endl;
+  os << Foam::endl;
+  os << Foam::setw(70) << Foam::setfill('-') << Foam::endl;
 }
 
 void Foam::caseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info) const
@@ -136,28 +134,50 @@ void Foam::caseSummary::systemInfo(Foam::Ostream &os) const
   delimiter(os);
 }
 
-void Foam::caseSummary::initials(Foam::Ostream &os, const Foam::argList &args) const
+void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
 {
   title("Phisics - initial conditions");
 
   // TODO
   Foam::Info << "Case Regions: \n i.e U, p, rho etc\n" << Foam::nl;
-  Foam::Info << "Case Patches\n" << Foam::nl;
-  Foam::Info << "Use IOobject ??\n" << Foam::nl;
+  Foam::Info << "Case Patches\n";
 
   // create an unique pointer to the case endTime (using root/case path)
-  std::unique_ptr<Foam::Time> zero_time { new Foam::Time(args.rootPath(), args.caseName()) };
-  if (!zero_time) return;
+  //std::unique_ptr<Foam::Time> zero_time { new Foam::Time(args.rootPath(), args.caseName()) };
+  //if (!zero_time) return;
 
   //auto obj = Foam::objectRegistry(*zero_time);
   //auto ioobj = IOobject()
 
   delimiter(os);
 
-  //delete(zero_time);
+  // display turbulenceProperties data
+  if (Foam::fileHandler().isFile(runTime.constant()/"turbulenceProperties"))
+  {
+    title("Phisics - Turbulence Properties");
+    Foam::turbulenceProperties(runTime).write(os);
+    delimiter(os);
+  }
+
+  // display multi region turbulenceProperties data
+  if (Foam::fileHandler().isFile(runTime.constant()/"regionProperties"))
+  {
+    title("Phisics - Turbulence Properties");
+    os << "Defined regions:" << Foam::endl;
+    Foam::multiRegionProperties(runTime).write(os);
+    delimiter(os);
+  }
+
+  // display transport properties
+  if (Foam::fileHandler().isFile(runTime.constant()/"transportProperties"))
+  {
+    title("Phisics - Transport Properties");
+    Foam::transportProperties(runTime).write(os);
+    delimiter(os);
+  }
 }
 
-void Foam::caseSummary::generalInfo(Foam::Ostream &os, const Foam::argList &args) const
+void Foam::caseSummary::caseInfo(Foam::Ostream &os, const Foam::argList &args) const
 {
   title("Current Case");
   os.writeEntry("Case basename", args.caseName());
@@ -173,31 +193,13 @@ void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) con
   // write controlDict solver data
   Foam::controlDict(runTime).write(os);
 
-  // write turbulenceProperties data
-  if (Foam::fileHandler().isFile(runTime.constant()/"turbulenceProperties"))
-  {
-    os << "Turbulence properties:" << Foam::endl;
-    Foam::turbulenceProperties(runTime).write(os);
-    os << Foam::endl;
-  }
-
-  // write multi region turbulenceProperties data
-  if (Foam::fileHandler().isFile(runTime.constant()/"regionProperties"))
-  {
-    os << "Defined regions:" << Foam::endl;
-    Foam::multiRegionProperties(runTime).write(os);
-  }
-
-  if (Foam::fileHandler().isFile(runTime.constant()/"transportProperties"))
-    Foam::transportProperties(runTime).write(os);
-
   delimiter(os);
 }
 
 void Foam::caseSummary::all(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
 {
   systemInfo(os);
-  generalInfo(os, args);
-  initials(os, args);
+  caseInfo(os, args);
+  phisics(os, args, runTime);
   solver(os, runTime);
 }

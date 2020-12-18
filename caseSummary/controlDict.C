@@ -135,6 +135,4 @@ void Foam::controlDict::write(Foam::Ostream& os) const
     os << " ";
     os.writeEntry("Re-read dicts", tempWord);
   }
-
-  os << endl;
 }

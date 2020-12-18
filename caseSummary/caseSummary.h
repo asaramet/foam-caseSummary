@@ -49,10 +49,10 @@ namespace Foam
     void systemInfo(Ostream&) const;
 
     //- Display current case info
-    void generalInfo(Ostream&, const argList&) const;
+    void caseInfo(Ostream&, const argList&) const;
 
-    //- Display initial conditions
-    void initials(Ostream&, const argList&) const;
+    //- Display phisics
+    void phisics(Ostream&, const argList&, const Time&) const;
 
     //- Display solver information
     void solver(Ostream&, const Time&) const;

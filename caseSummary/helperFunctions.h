@@ -22,7 +22,7 @@ namespace Foam
 
 
   // recursivley display a dictionary data
-  void writeDicts_(Ostream& os, dictionary& mainDict, word displacement = "");
+  void writeDicts_(Ostream& os, dictionary& mainDict, word displacement = "", int step = 0);
 
 
 } // End namespace Foam

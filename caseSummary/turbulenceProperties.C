@@ -48,7 +48,6 @@ void Foam::turbulenceProperties::write(Foam::Ostream& os) const
   const word simulationType { turbulenceProperties_.get<word>("simulationType") };
 
   // display flow type
-  os << " ";
   os.writeEntry("Flow", simulationType);
 
   // get the model type sub-dict as a unique pointer
