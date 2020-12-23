@@ -20,6 +20,9 @@
        - \par -solver
          Display solver settings
 
+       - \par -initials
+         Display initial conditions
+
        - \par
          Display all the data
  \*---------------------------------------------------------------------------*/
@@ -66,6 +69,7 @@ int main(int argc, char *argv[])
   Foam::argList::addBoolOption("caseInfo", "Display case information");
   Foam::argList::addBoolOption("phisics", "Display case phisics");
   Foam::argList::addBoolOption("solver", "Display solver settings");
+  Foam::argList::addBoolOption("initials", "Display initial conditions");
   Foam::argList::addBoolOption("", "Display all collected information");
 
   // Create an argList Object ("setRootCase.H")
@@ -89,6 +93,10 @@ int main(int argc, char *argv[])
   // Default display (no specific options provided)
   if (args.options().empty())
     caseSummary.all(Foam::Info, args, runTime);
+
+  // Display initial conditions
+  if (args.found("initials"))
+    caseSummary.initials(Foam::Info, runTime);
 
   // Display case physics
   if (args.found("phisics"))
@@ -139,25 +147,19 @@ void Foam::caseSummary::systemInfo(Foam::Ostream &os) const
   delimiter(os);
 }
 
-void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
+void Foam::caseSummary::initials(Foam::Ostream &os, const Foam::Time &runTime) const
 {
-
   // display initial conditions
   if (Foam::fileHandler().isDir(runTime.timeName(0)))
   {
     title("Phisics - initial conditions");
-    os << "Yeee" << Foam::endl;
     Foam::boundaryConditions(runTime).write(os);
     delimiter(os);
   }
-  // create an unique pointer to the case endTime (using root/case path)
-  //std::unique_ptr<Foam::Time> zero_time { new Foam::Time(args.rootPath(), args.caseName()) };
-  //if (!zero_time) return;
+}
 
-  //auto obj = Foam::objectRegistry(*zero_time);
-  //auto ioobj = IOobject()
-
-
+void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, const Foam::Time &runTime) const
+{
   // display turbulenceProperties data
   if (Foam::fileHandler().isFile(runTime.constant()/"turbulenceProperties"))
   {
@@ -216,6 +218,7 @@ void Foam::caseSummary::all(Foam::Ostream &os, const Foam::argList &args, const 
 {
   systemInfo(os);
   caseInfo(os, args);
+  initials(os, runTime);
   phisics(os, args, runTime);
   solver(os, runTime);
 }

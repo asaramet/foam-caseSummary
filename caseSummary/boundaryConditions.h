@@ -10,6 +10,9 @@ Description
 #ifndef BOUNDARY_CONDITIONS_H
 #define BOUNDARY_CONDITIONS_H
 
+#include "word.H"
+#include "fvMesh.H"
+
 namespace Foam
 {
   // dummy
@@ -27,10 +30,13 @@ class boundaryConditions
   //- run Time object
   const Time& runTime_;
 
+  //- region name, default is 'region0'
+  const word regionName_;
+
 public:
 
-  // Overided Constructors
-  boundaryConditions(const Time& runTime);
+  // Overided Constructors (fvMesh::defaultRegion ~= "region0")
+  boundaryConditions(const Time& runTime, const word& regionName = fvMesh::defaultRegion);
 
   boundaryConditions(const boundaryConditions& other) = default;
   boundaryConditions(boundaryConditions&& other) = default;

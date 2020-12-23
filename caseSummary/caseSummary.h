@@ -51,6 +51,9 @@ namespace Foam
     //- Display current case info
     void caseInfo(Ostream&, const argList&) const;
 
+    //- Display initial conditions
+    void initials(Ostream&, const Time&) const;
+
     //- Display phisics
     void phisics(Ostream&, const argList&, const Time&) const;
 
