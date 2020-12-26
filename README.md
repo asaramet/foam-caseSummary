@@ -1,6 +1,26 @@
 # OpenFOAM utility to display Foam case structure and configuration.
 
-The application is developed under the OpenFOAM Project. It may be compiled with any OpenFOAM version and used to display some OpenFOAM case structure configuration and additional info.  
+The application is developed under the OpenFOAM Project (https://openfoam.com/). It may be compiled with any OpenFOAM version and used to display some OpenFOAM case structure configuration and additional info.  
+
+## About OpenFOAM
+
+OpenFOAM is a free, open source CFD software that has a large user base across multiple areas of engineering and science. It has features to solve anything from complex fluid flows involving chemical reactions, turbulence and heat transfer to acoustics, solid mechanics and electromagnetism.  
+
+## About caseSummary utility, developed here
+
+OpenFOAM being a C++ open source software uses dictionaries in form of text files to provide solver specific data such as boundary and initial conditions, turbulence models, fluid properties, solver variables etc to OpenFOAM cases.
+
+For a new user it may be challenging to understand how the cases are build, which data is already provided and need to be modified to let the solver properly run. Many times the user will have to look for an error or find out what's wrong with the case, by going through all the text dictionaries line by line.
+
+'caseSummary' is developed to provide a quick view of the current OpenFOAM case structure and data through OpenFOAM'ish command lines. It uses standard OpenFOAM libraries, functions and objects.
+
+## Useful websites
+
+1. Official OpenFOAM ESI's webpage: https://openfoam.com/
+
+2. OpenFOAM user guide: https://www.openfoam.com/documentation/guides/latest/doc/index.html
+
+3. This project on GitHUB: https://github.com/asaramet/foam-caseSummary
 
 ## Installation
 
