@@ -1,6 +1,7 @@
 helperFunctions.C
 controlDict.C
 turbulenceProperties.C
+thermophysicalProperties.C
 multiRegionProperties.C
 transportProperties.C
 extraFields.C

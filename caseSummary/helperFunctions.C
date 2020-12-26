@@ -3,6 +3,8 @@
 \*---------------------------------------------------------------------------*/
 
 #include "Ostream.H"
+#include "IOmanip.H"        // iomanip
+#include "IOdictionary.H"
 
 #include "helperFunctions.H"
 #include "dictionaryEntry.H"
@@ -47,4 +49,19 @@ void Foam::writeDicts_(Foam::Ostream& os, Foam::dictionary& mainDict, Foam::word
       writeDicts_(os, *dictPtr_, title_displacement, step);
     }
   } // end forAll
+} // end writeDicts_
+
+void Foam::title_(Foam::string title, Foam::Ostream& os = Foam::Info)
+{
+  for (char &letter:title)
+    letter = std::toupper(letter);
+  os << Foam::nl << Foam::setw(10) << Foam::setfill(' ')
+     << title << Foam::nl << Foam::endl;
+} // end title_
+
+bool isFile_(const Foam::word& filePath)
+{
+  if (Foam::fileHandler().isFile(filePath))
+    return true;
+  return false;
 }

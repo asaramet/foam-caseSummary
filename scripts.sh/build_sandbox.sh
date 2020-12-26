@@ -44,7 +44,8 @@ copy_data()
 
   src_folder="${BUILD_FOLDER}/src"
   [[ ! -d ${src_folder} ]] && mkdir -p ${src_folder}
-  cp -rf ${OF_SOURCE_FOLDER}/src/{OpenFOAM,OSspecific,Pstream} ${src_folder}
+  #cp -rf ${OF_SOURCE_FOLDER}/src/{OpenFOAM,OSspecific,Pstream} ${src_folder}
+  cp -rf ${OF_SOURCE_FOLDER}/src ${src_folder}
 }
 
 create_bashrc()
@@ -95,5 +96,5 @@ EOF
 
 copy_data
 create_bashrc
-print_src_Allwmake > "${BUILD_FOLDER}/src/Allwmake"
+#print_src_Allwmake > "${BUILD_FOLDER}/src/Allwmake"
 chmod u+x ${BUILD_FOLDER}/src/Allwmake

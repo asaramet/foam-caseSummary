@@ -33,6 +33,11 @@ class boundaryConditions
   //- region name, default is 'region0'
   const word regionName_;
 
+  // Private functions
+
+  //- Diplay fields info
+  void fieldsInfo_(Ostream&, const fvMesh&, const wordList&) const;
+
 public:
 
   // Overided Constructors (fvMesh::defaultRegion ~= "region0")
@@ -51,7 +56,7 @@ public:
   // Public member functions
 
   // Display data
-  void write(Ostream &os) const;
+  void write(Ostream&) const;
 };
 
 

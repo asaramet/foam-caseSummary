@@ -41,11 +41,13 @@
 #include "IOdictionary.H"   // constructor from IOobject with readData/writeData functions
 #include "timeSelector.H"   // list of scalarRange for selecting times
 
+#include "helperFunctions.H"
 #include "controlDict.H"
 #include "turbulenceProperties.H"
 #include "caseSummary.H"
 #include "multiRegionProperties.H"
 #include "transportProperties.H"
+#include "thermophysicalProperties.H"
 #include "extraFields.H"
 #include "boundaryConditions.H"
 
@@ -123,17 +125,9 @@ void Foam::caseSummary::delimiter(Foam::Ostream &os) const
   os << Foam::setw(70) << Foam::setfill('-') << Foam::endl;
 }
 
-void Foam::caseSummary::title(Foam::string title, Foam::Ostream& os = Foam::Info) const
-{
-  for (char &letter:title)
-    letter = std::toupper(letter);
-  os << Foam::nl << Foam::setw(10) << Foam::setfill(' ')
-     << title << Foam::nl << Foam::endl;
-}
-
 void Foam::caseSummary::systemInfo(Foam::Ostream &os) const
 {
-  title("About");
+  Foam::title_("About", os);
   Foam::string of {"OpenFOAM-"};
   of += Foam::FOAMversion;
   os.writeEntry("Module", of);
@@ -141,7 +135,7 @@ void Foam::caseSummary::systemInfo(Foam::Ostream &os) const
   os.writeEntry("Architecture", Foam::FOAMbuildArch);
   os.writeEntry("Current Time", Foam::clock::dateTime());
 
-  title("System CPU Information");
+  Foam::title_("System CPU Information", os);
   Foam::cpuInfo().write(os);
 
   delimiter(os);
@@ -152,7 +146,7 @@ void Foam::caseSummary::initials(Foam::Ostream &os, const Foam::Time &runTime) c
   // display initial conditions
   if (Foam::fileHandler().isDir(runTime.timeName(0)))
   {
-    title("Phisics - initial conditions");
+    Foam::title_("Phisics - initial conditions", os);
     Foam::boundaryConditions(runTime).write(os);
     delimiter(os);
   }
@@ -163,7 +157,7 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
   // display turbulenceProperties data
   if (Foam::fileHandler().isFile(runTime.constant()/"turbulenceProperties"))
   {
-    title("Phisics - Turbulence Properties");
+    Foam::title_("Phisics - Turbulence Properties", os);
     Foam::turbulenceProperties(runTime).write(os);
     delimiter(os);
   }
@@ -171,7 +165,7 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
   // display multi region turbulenceProperties data
   if (Foam::fileHandler().isFile(runTime.constant()/"regionProperties"))
   {
-    title("Phisics - Regions Turbulence Properties");
+    Foam::title_("Phisics - Regions Turbulence Properties", os);
     Foam::multiRegionProperties(runTime).write(os);
     delimiter(os);
   }
@@ -179,15 +173,25 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
   // display transport properties
   if (Foam::fileHandler().isFile(runTime.constant()/"transportProperties"))
   {
-    title("Phisics - Transport Properties");
+    Foam::title_("Phisics - Transport Properties", os);
     Foam::transportProperties(runTime).write(os);
     delimiter(os);
   }
 
+  #if 0
+  // display thermophysical properties
+  if (Foam::fileHandler().isFile(runTime.constant()/"thermophysicalProperties"))
+  {
+    Foam::title_("Phisics - Thermophysical Properties", os);
+    Foam::thermophysicalProperties(runTime).write(os);
+    delimiter(os);
+  }
+  #endif
+
   // display gravity
   if (Foam::fileHandler().isFile(runTime.constant()/"g"))
   {
-    title("Phisics - Extra fields");
+    Foam::title_("Phisics - Extra fields", os);
     Foam::extraFields(runTime).write(os);
     delimiter(os);
   }
@@ -197,7 +201,7 @@ void Foam::caseSummary::phisics(Foam::Ostream &os, const Foam::argList &args, co
 
 void Foam::caseSummary::caseInfo(Foam::Ostream &os, const Foam::argList &args) const
 {
-  title("Current Case");
+  Foam::title_("Current Case", os);
   os.writeEntry("Case basename", args.caseName());
   os.writeEntry("Case root path", args.rootPath());
 
@@ -206,7 +210,7 @@ void Foam::caseSummary::caseInfo(Foam::Ostream &os, const Foam::argList &args) c
 
 void Foam::caseSummary::solver(Foam::Ostream &os, const Foam::Time &runTime) const
 {
-  title("Solver settings");
+  Foam::title_("Solver settings", os);
 
   // write controlDict solver data
   Foam::controlDict(runTime).write(os);

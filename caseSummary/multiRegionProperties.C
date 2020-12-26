@@ -7,6 +7,7 @@
 
 #include "multiRegionProperties.H"
 #include "turbulenceProperties.H"
+#include "thermophysicalProperties.H"
 
 // * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * * * //
 
@@ -30,6 +31,9 @@ void Foam::multiRegionProperties::write(Foam::Ostream& os) const
     os.writeEntry("Region", regionName);
 
     Foam::turbulenceProperties(runTime_, regionName).write(os);
+    os << Foam::endl;
+
+    Foam::thermophysicalProperties(runTime_, regionName).write(os);
     os << Foam::endl;
   }
 

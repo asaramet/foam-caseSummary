@@ -28,8 +28,6 @@ namespace Foam
     //- Section/paragraph delimiter
     void delimiter(Ostream&) const;
 
-    //- Section title
-    void title(string, Ostream&) const;
   public:
     // Constructors
     caseSummary() = default;

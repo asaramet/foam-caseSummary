@@ -23,6 +23,11 @@ namespace Foam
   // recursivley display a dictionary data
   void writeDicts_(Ostream& os, dictionary& mainDict, word displacement = "", int step = 0);
 
+  // display section title
+  void title_(string, Ostream&);
+
+  // check if file exists
+  bool isFile_(const word&);
 
 } // End namespace Foam
 
